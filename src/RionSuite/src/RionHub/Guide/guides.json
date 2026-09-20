@@ -1,0 +1,406 @@
+[
+  {
+    "id": "drivers",
+    "title": "GPU driver installation guide",
+    "summary": "Use this guide to choose a driver and understand the two installation routes in GPU Manager. A driver connects Windows and your applications to the graphics hardware. Start with the release that supports your GPU and the applications you use.",
+    "googleDocUrl": "https://docs.google.com/document/d/1VN6h9FXANK0-as18evsNB8hUKE0XH4Ro/edit",
+    "sections": [
+      {
+        "heading": "Choose a release",
+        "paragraphs": [
+          "Open GPU Manager, then Welcome. The version selector includes a release date. Release notes explain supported hardware, fixes and known issues. Why this version contains Rion’s reasoning and its review date.",
+          "Optimal is Rion’s starting recommendation. It does not mean that performance was measured on your computer. Latest vendor release shows the vendor’s current listing separately. Check its freshness when a refresh fails.",
+          "For a notebook, handheld or hybrid graphics system, check the manufacturer’s driver guidance before changing packages. Keep a copy of a working installer if you will need to return to it."
+        ]
+      },
+      {
+        "heading": "Choose installation",
+        "paragraphs": [
+          "Install selected version downloads that selection and opens the full vendor installer. Complete the vendor’s prompts. Component choices made elsewhere in Rion do not change this full-package route.",
+          "Customize a package instead opens the guided preparation route. Prepare latest compatible driver downloads a compatible package; it can differ from the version selected above. To customize a file you already have, expand Use an installer already on this PC and choose it."
+        ]
+      },
+      {
+        "heading": "Follow the custom workflow",
+        "paragraphs": [
+          "Select Driver identifies the package. Analyze Installer reads its contents. Customize Installation lets you choose supported components. Keep anything required by features you use, such as recording, audio or the vendor control panel.",
+          "Review and Prepare creates the working package. Choose Services and Tweaks shows optional changes. Install and Verify launches setup, observes the outcome and checks the driver afterward. Finish and Export presents the result and available records. The sidebar keeps these checkpoints accessible.",
+          "Review optional GPU tweaks before enabling their parent checkbox. They are separate changes with their own tradeoffs. The driver installer can finish while an optional change fails; read the result instead of assuming everything succeeded."
+        ]
+      },
+      {
+        "heading": "Verification and recovery",
+        "paragraphs": [
+          "Installer verification shows information about a selected local package. An official website listing alone does not verify a downloaded file. Rion checks the package before launch; a signature warning is not an instruction to bypass that check.",
+          "Restart when setup requests it. If a problem begins after the update, use a working vendor installer or Windows driver rollback when available. Reverting Rion’s settings does not reinstall an older driver. Save any reported failure details before trying another change."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "AMD driver downloads and support",
+        "url": "https://www.amd.com/en/support/download/drivers.html"
+      },
+      {
+        "label": "NVIDIA driver downloads",
+        "url": "https://www.nvidia.com/Download/index.aspx"
+      }
+    ]
+  },
+  {
+    "id": "mmcss",
+    "title": "MMCSS settings guide",
+    "summary": "MMCSS prioritizes multimedia threads that an application registers. Inspect the current values first. Apply all leaves these settings unchanged.",
+    "googleDocUrl": "https://docs.google.com/document/d/1DfL9N9V--GnPr5OAhGURZvuaWH4FlRv7/edit",
+    "sections": [
+      {
+        "heading": "Understand the task profiles",
+        "paragraphs": [
+          "Open Tweaks, General, MMCSS. The seven task cards are Games, Audio, Capture, Distribution, Playback, Pro Audio and Window Manager. Each contains the same six fields. A task name is not a switch for every application with that purpose: the application must register its relevant threads.",
+          "Expand Individual settings only on the task you intend to change. Current shows the value Rion can recognize. Not set or custom value means the current state is not one of the offered choices. A missing task key is not created automatically."
+        ]
+      },
+      {
+        "heading": "Read the six fields",
+        "paragraphs": [
+          "Priority and Background priority accept values from 1 to 8. Scheduling category has Low, Medium and High choices; High uses a priority value of 2. These fields describe MMCSS scheduling, not a game-wide process priority.",
+          "Background only describes work without a user interface. Affinity controls processor restrictions; Rion offers the unrestricted choice rather than guessing a core layout.",
+          "Clock rate is a scheduling hint. Its old timing guarantee was removed starting with Windows 7. Treat it as an advanced hint, not a timer-resolution or frame-rate control."
+        ]
+      },
+      {
+        "heading": "Understand CPU reservation",
+        "paragraphs": [
+          "SystemResponsiveness reserves CPU time for lower-priority tasks. Microsoft documents rounding down to a multiple of 10; values below 10 or above 100 become 20. A value of 100 disables MMCSS. Zero is not a zero-reservation shortcut.",
+          "Rion currently keeps its legacy reservation tweak read-only. Read-only controls are not applied by a batch. There is no established universal gaming benefit from changing this reservation."
+        ]
+      },
+      {
+        "heading": "Make one deliberate change",
+        "paragraphs": [
+          "Choose one field, select a value and press Apply value. Selecting an item in a task dropdown alone does not apply it. Read the action label on single-value cards: a preset in an Adjust menu applies immediately.",
+          "Rion saves the previous registry state for its changes. Restart when the card requests it, then check the audio, video or game workload you intended to affect. Apply all excludes these individual controls.",
+          "Use Revert changes on the affected field or card to restore saved state. A restore can fail if access or the machine’s state has changed; keep the reported details and resolve that failure before assuming recovery completed."
+        ]
+      },
+      {
+        "heading": "What to expect",
+        "paragraphs": [
+          "The controls expose documented scheduling behavior. That alone does not establish a performance improvement for your PC. If you cannot identify the affected application or a specific problem, leave the settings unchanged."
+        ]
+      },
+      {
+        "heading": "Values worth comparing, and values to leave alone",
+        "paragraphs": [
+          "Keep the saved original state as the baseline. For a workload known to register the Games task, a Priority comparison within 1–8 under Medium can test scheduling sensitivity. Test only one step at a time; a higher number is not automatically better. High is intended for professional audio and treats Priority as 2.",
+          "Affinity 0 and 0xFFFFFFFF both mean no task affinity restriction. Do not restrict processors without a workload-specific reason. The old Clock Rate guarantee was removed starting with Windows 7. Microsoft lists GPU Priority and SFIO Priority as unused; changing them is not an evidence-based optimization."
+        ]
+      },
+      {
+        "heading": "Repeatable comparison",
+        "paragraphs": [
+          "Record the current value and whether it is absent. Run the same game scene or audio session several times with the same driver, power plan, resolution and background workload. Save frame-time percentiles, stutter events or audio dropouts.",
+          "Change one field, restart when requested, warm up and repeat the same runs. Restore the saved value and repeat the baseline. Keep a change only when the improvement exceeds normal run-to-run variation without regressions. Rion verifies configuration, not performance."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft multimedia class scheduler documentation",
+        "url": "https://learn.microsoft.com/en-us/windows/win32/procthread/multimedia-class-scheduler-service"
+      }
+    ]
+  },
+  {
+    "id": "power",
+    "title": "Custom Power Plan guide",
+    "summary": "Use Custom Power Plan to inspect Windows power settings and stage changes before applying them. A plan balances responsiveness, electricity use, battery life and heat. Start with the active plan and change only settings you understand.",
+    "googleDocUrl": "https://docs.google.com/document/d/1PRYiaiYyojLFrcHkRrTQMHzbebeBNSwb/edit",
+    "sections": [
+      {
+        "heading": "Find a setting",
+        "paragraphs": [
+          "Open System, Custom Power Plan. Choose a category or search by a setting’s name. Selecting a row opens its details and does not change Windows. Hidden settings can be displayed when you need them; being hidden does not establish that a setting should be changed.",
+          "A blue dot marks a setting that differs from its Windows default or has a pending edit. It does not mean that the value is recommended. Suggested identifies available guidance. The detail panel explains the suggestion and provides its source."
+        ]
+      },
+      {
+        "heading": "Stage and apply changes",
+        "paragraphs": [
+          "Read the full setting description and offered values. AC means connected to external power. DC means running on battery. Review these separately on a laptop.",
+          "Editing a value stages it. Review pending changes, then choose Apply changes to write them. A suggested value still needs review for your device and workload. Check the reported outcome after applying."
+        ]
+      },
+      {
+        "heading": "Understand the tradeoffs",
+        "paragraphs": [
+          "Keeping devices awake or raising minimum processor activity can increase power use and heat. This can matter on a laptop even while plugged in. Preserve the manufacturer’s cooling and thermal protections.",
+          "USB selective suspend concerns idle USB power. Changing it can affect power use and device behavior; it is not a universal input-latency switch. Link-state and sleep settings concern different parts of the machine, so treat them as separate choices."
+        ]
+      },
+      {
+        "heading": "Return to a working plan",
+        "paragraphs": [
+          "Distinguish changing back to your previous plan, restoring a saved setting and recreating Windows default plans. These operations have different scopes. Read the action before using it.",
+          "Record the original value before a manual experiment. If the app offers saved-state recovery for your operation, use that recovery and check the result. Reload reads current values; it is not an undo command for values already written."
+        ]
+      },
+      {
+        "heading": "Work with plan files",
+        "paragraphs": [
+          "Import and Export work with power-plan files. Export a plan you want to retain before replacing it. An imported plan can include many settings beyond the one you were viewing.",
+          "A saved batch file is an executable set of commands. Review its contents and intended machine before running it. Opening this guide or selecting a setting does not run it."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft power configuration command reference",
+        "url": "https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options"
+      }
+    ]
+  },
+  {
+    "id": "network",
+    "title": "Network settings guide",
+    "summary": "Use the Network page to inspect and change the adapter you actually use. Adapter options vary by hardware and driver. A setting that helps one workload can reduce throughput or increase CPU use in another.",
+    "googleDocUrl": "https://docs.google.com/document/d/1dZKUyWoMJuVqZ38h8MSn9ZQykYNkp3JN/edit",
+    "sections": [
+      {
+        "heading": "Choose the adapter",
+        "paragraphs": [
+          "Open System, Network and select your Ethernet or Wi-Fi adapter by its name. A virtual adapter, VPN or disconnected port may not be the connection you intended. Refresh adapters if the list has changed.",
+          "The profile shows settings exposed by that adapter and its driver. Missing or unavailable controls are not evidence of an error in your PC. Do not copy registry values from a different model to manufacture a missing option."
+        ]
+      },
+      {
+        "heading": "Understand the main options",
+        "paragraphs": [
+          "Receive Side Scaling distributes receive processing across CPU resources. Queue counts depend on adapter support. Interrupt moderation reduces how frequently the adapter interrupts the CPU, trading some responsiveness for efficiency.",
+          "Offloads move supported network work from the CPU to the adapter. Disabling them is not automatically faster. Energy-saving and wake options govern low-power behavior or waking the machine; review them against your sleep and remote-access needs.",
+          "Link speed and duplex must be compatible with both ends of the connection. An inappropriate manual value can prevent the link from working. TCP congestion controls concern TCP traffic; they do not directly tune every game’s UDP traffic."
+        ]
+      },
+      {
+        "heading": "Apply a profile or a single setting",
+        "paragraphs": [
+          "Review the listed profile choices before Apply profile. Optional advanced controls, such as wake behavior or RSS queue counts, remain individual choices. Read the control label to see whether it writes immediately or has a separate Apply action.",
+          "Connection changes can briefly interrupt the adapter. Finish important transfers first. After applying, read the status and check the services you use. Rion saves previous values for supported changes and provides Revert changes."
+        ]
+      },
+      {
+        "heading": "Use DNS and repair actions",
+        "paragraphs": [
+          "DNS translates names into addresses. A DNS change can affect name lookup, but it does not change the physical route or guarantee lower game latency. Use the DNS controls for the intended adapter.",
+          "Connection repairs have a different scope from profile tuning. Choose the repair that matches the problem and read its reported result. Reset adapter can disconnect you; do not treat it as a routine performance setting."
+        ]
+      },
+      {
+        "heading": "Recover after a problem",
+        "paragraphs": [
+          "Return to the same adapter and use its saved recovery action. If a driver update removes a property, Rion can still show a recovery record rather than silently discard it. A missing adapter, unsupported setter or access failure can require further action.",
+          "Keep any reported error and the adapter’s identity. Avoid making several new changes while diagnosing the original problem. Driver-specific options such as FastSendDatagramThreshold are not universal recommendations."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft network adapter performance tuning",
+        "url": "https://learn.microsoft.com/en-us/windows-server/networking/technologies/network-subsystem/net-sub-performance-tuning-nics"
+      }
+    ]
+  },
+  {
+    "id": "tweaks",
+    "title": "Windows tweaks and recovery guide",
+    "summary": "Rion groups Windows settings into cards so you can understand an action before applying it. Start with a category and a specific need. You can use the app without applying every card.",
+    "googleDocUrl": "https://docs.google.com/document/d/11tQIL9JiB14b1_Au2QYhyEX2o_g3cqQ5/edit",
+    "sections": [
+      {
+        "heading": "Find the right control",
+        "paragraphs": [
+          "Open Tweaks, General. Categories organize performance, system, graphics, security, network and MMCSS choices. Search narrows the visible cards. Each card describes the affected behavior and any relevant tradeoff.",
+          "MMCSS has its own guide because its task profiles contain repeated advanced fields. The information button beside MMCSS opens that guide directly. The top information button opens help for the current page."
+        ]
+      },
+      {
+        "heading": "Understand when a change happens",
+        "paragraphs": [
+          "A switch applies the card’s change when turned on. Turning it off uses its supported recovery behavior. An Adjust menu applies the selected preset immediately. The individual MMCSS task dropdowns use a separate Apply value button.",
+          "Apply all reviews eligible cards across the available sections. Search and category filters do not limit that action. Apply recommended shown uses the visible selection. Manual and individual-choice settings remain separate.",
+          "Restart to apply identifies changes that need a restart. Inspect and restore only means new writes are disabled, while a saved earlier change can still be recovered. An unavailable control should explain why it cannot be used."
+        ]
+      },
+      {
+        "heading": "Read recommendations in context",
+        "paragraphs": [
+          "Recommended is a starting choice based on the setting’s intended use. It does not establish a measured improvement on your PC. Security, background activity, power consumption and compatibility can matter as much as raw performance.",
+          "Keep protection and application dependencies in mind. A smaller number of background processes is not itself proof of a faster system. Use an advanced option for a known requirement, not because its name sounds faster."
+        ]
+      },
+      {
+        "heading": "Use saved recovery",
+        "paragraphs": [
+          "Revert changes on a changed card restores the state saved for that operation. For supported registry changes, this includes the original value type and whether a value was absent. Restoring defaults is a different action and may not match your previous configuration.",
+          "Read the result after both apply and revert. A denied write, changed hardware, interrupted operation or externally modified setting can prevent complete recovery. Keep the operation details until the issue is resolved.",
+          "A Windows restore point is separate from Rion’s saved settings. Review what each recovery action covers before using it."
+        ]
+      },
+      {
+        "heading": "Apply all review",
+        "paragraphs": [
+          "Apply all reviews every catalog setting regardless of filters. Individual-choice settings stay untouched. Experimental and security-sensitive settings start unchecked on each review. Unavailable settings remain blocked with a reason.",
+          "Results identify each changed, already configured, excluded, unavailable or failed setting. A failed card can trigger recovery; inspect its details before retrying."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft Windows recovery options",
+        "url": "https://support.microsoft.com/windows/recovery-options-in-windows-31ce2444-7de3-818c-d626-e3b5a3024da5"
+      }
+    ]
+  },
+  {
+    "id": "apps",
+    "title": "App cleanup and installation guide",
+    "summary": "Debloating removes selected applications or adjusts optional background services. Windows provides installation and repair tools. Use the two areas together, and keep apps needed by your games, devices and daily work.",
+    "googleDocUrl": "https://docs.google.com/document/d/19soynLuYjZBEKLyO03Vg56Jo55isKvEp/edit",
+    "sections": [
+      {
+        "heading": "Review before cleanup",
+        "paragraphs": [
+          "Open Tweaks, Debloating. Desktop apps and Microsoft Store apps are separate inventories. Search by name or publisher, then select the apps you recognize. The selection count can include items hidden by the current search.",
+          "Review Auto Debloat opens the proposed cleanup. Options and kept apps explains the optional OneDrive, Widgets and service changes. Review that list before proceeding; a name that sounds unnecessary may support something you use."
+        ]
+      },
+      {
+        "heading": "Understand dependencies",
+        "paragraphs": [
+          "Gaming Services and Xbox components can be required by installed games. Removing them can stop those games from launching or updating. Audio and device utilities may provide features beyond the basic driver.",
+          "Before removing OneDrive, make sure needed cloud-only files are downloaded and understand how your folder backup is configured. Reinstalling an app does not guarantee that its previous settings or unsaved data will return."
+        ]
+      },
+      {
+        "heading": "Remove selected apps",
+        "paragraphs": [
+          "Use Uninstall selected and complete any external uninstaller prompts. Read the result afterward. An item remains visible when removal failed or could not be confirmed. Refresh to read the current inventory.",
+          "A checkbox marks your removal selection. Row focus alone is not a removal request. Installed artwork is used where readable; a built-in icon identifies an app when artwork is unavailable."
+        ]
+      },
+      {
+        "heading": "Install or repair from Windows",
+        "paragraphs": [
+          "Open Windows. Apps lists common software, Windows apps lists supported Microsoft apps, and Runtimes lists shared components used by other programs. Select the required entries and use Install selected.",
+          "Utilities have their own Get or Run action. Get obtains the utility; Run opens an available copy after the app’s checks. These actions do not mean the utility’s cleanup or driver-removal process has already run.",
+          "Windows health and Store repair contains separate repair actions. Health switches apply when changed; Repair Store runs when selected. Use them for the relevant problem rather than as routine cleanup."
+        ]
+      },
+      {
+        "heading": "Recover and check the result",
+        "paragraphs": [
+          "Reinstall supported apps through Windows apps, Microsoft Store or the original vendor installer. Restore personal data from your own backup when required. A saved service setting can be restored separately from reinstalling an application.",
+          "If a game or device feature stops working, identify the dependency that was removed and reinstall it. Avoid repeating broad removal while diagnosing that problem."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft app repair guidance",
+        "url": "https://support.microsoft.com/windows/repair-apps-and-programs-in-windows-e90eefe4-d0a2-7c1b-dd59-949a9030f317"
+      }
+    ]
+  },
+  {
+    "id": "gpu-settings",
+    "title": "GPU controls and profiles guide",
+    "summary": "GPU controls adjust graphics behavior supported by your hardware and installed driver. Start with a specific goal such as image quality, lower power use or an application compatibility fix. Driver installation and graphics settings are separate workflows.",
+    "googleDocUrl": "https://docs.google.com/document/d/1w2XwCeF9QTkIu_CJKW9Pxm8K5kHEbFt9/edit",
+    "sections": [
+      {
+        "heading": "Identify supported controls",
+        "paragraphs": [
+          "Open GPU Manager and the graphics controls section for the detected vendor. System, Display, Performance and tuning pages organize different functions. An unavailable setting should explain its limitation instead of pretending the hardware supports it.",
+          "AMD and NVIDIA do not expose identical controls through their interfaces. A control present in one manager may be unavailable in the other. Driver updates can also change support."
+        ]
+      },
+      {
+        "heading": "Use a built in profile",
+        "paragraphs": [
+          "Open Recommended profiles and review the changes associated with the selected profile. Balanced, Esports, Quality and Efficiency describe different intended tradeoffs. Use the preview to decide whether those changes fit your applications.",
+          "Apply the supported profile and read the result. Current values and successful readback are useful checks, but they do not measure the frame rate or latency of your games. Restore the saved values if you want to return to the prior configuration."
+        ]
+      },
+      {
+        "heading": "Change graphics features deliberately",
+        "paragraphs": [
+          "Read the description of each feature. Anti-aliasing, texture filtering, synchronization and latency features have different jobs. In-game settings and driver overrides can interact, so keep track of both.",
+          "If a flicker or presentation problem leads you to an MPO troubleshooting control, treat that as a targeted experiment. Disabling an overlay path can increase composition work and power consumption. It is not a general quality or performance preset."
+        ]
+      },
+      {
+        "heading": "Review tuning limits",
+        "paragraphs": [
+          "Clock, voltage, power and fan controls depend on supported vendor interfaces and hardware. Do not assume that a visible category means every device permits changes. A disabled control is not an invitation to bypass firmware limits.",
+          "Change one setting at a time, keep thermal protections enabled and watch for instability. The app’s supported saved-state recovery applies to its recorded changes; it cannot guarantee recovery from every hardware or driver failure."
+        ]
+      },
+      {
+        "heading": "Return to a known state",
+        "paragraphs": [
+          "Use the relevant profile or setting recovery action and inspect its result. Avoid combining a driver update with many tuning changes when you need to diagnose a problem.",
+          "If the issue began after installing a driver, consult the GPU driver installation guide. Restoring graphics preferences and reinstalling a previous driver solve different problems."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "AMD Software support",
+        "url": "https://www.amd.com/en/products/software/adrenalin.html"
+      },
+      {
+        "label": "NVIDIA overlay troubleshooting note",
+        "url": "https://nvidia.custhelp.com/app/answers/detail/a_id/5157"
+      }
+    ]
+  },
+  {
+    "id": "priority-separation",
+    "title": "Win32 Separation Control",
+    "summary": "A foreground scheduling preference, not process priority. Apply all leaves it unchanged.",
+    "googleDocUrl": null,
+    "sections": [
+      {
+        "heading": "Read the value correctly",
+        "paragraphs": [
+          "The DWORD Win32PrioritySeparation combines scheduling choices. Hexadecimal 0x26 is decimal 38, not decimal 26. Rion labels both forms to prevent base confusion.",
+          "Historical Windows documentation describes short versus long time slices, fixed versus variable slices, and foreground boost. These descriptions are not a guarantee of Windows 11 gaming performance. Effective defaults can depend on Windows edition; a missing value is not the same registry state as a stored zero."
+        ]
+      },
+      {
+        "heading": "Available scheduling choices",
+        "paragraphs": [
+          "Programs (0x26 / 38 decimal) requests short variable slices, with a foreground quantum three times the background quantum. Short variable 0x25 / 37 requests twice the quantum; 0x24 / 36 requests equal slices. These ratios describe time-slice lengths, not CPU allocation percentages or thread-priority levels.",
+          "Background services (0x18 / 24) requests long fixed slices, with no extra foreground quantum. Windows edition defaults (0x02 / 2) keeps the edition-dependent length and type, with foreground boost index 2 where variable slices are in use. On client Windows this typically matches Programs behavior. It does not delete the registry value or restore the original state.",
+          "Record the original, run the same workload several times, change only this setting, restart, and repeat. Compare frame-time percentiles, background throughput and audio dropouts. Restore and rerun the baseline when results are inconclusive or worse."
+        ]
+      },
+      {
+        "heading": "Control and recovery",
+        "paragraphs": [
+          "The Adjust menu applies a selected preset immediately. Restore returns to the saved value or removes the value if originally absent. Apply all does not select a preset for you."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Microsoft Windows Internals, historical scheduling discussion",
+        "url": "https://live.sysinternals.com/files/WindowsInternals-Ch05.pdf"
+      },
+      {
+        "label": "Microsoft scheduling priorities",
+        "url": "https://learn.microsoft.com/en-us/windows/win32/procthread/scheduling-priorities"
+      }
+    ]
+  }
+]

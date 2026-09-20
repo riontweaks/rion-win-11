@@ -1,0 +1,52 @@
+[
+  {
+    "packages": [
+      "System.IO.Abstractions-22.0.11",
+      "TestableIO.System.IO.Abstractions-22.0.11",
+      "TestableIO.System.IO.Abstractions.Wrappers-22.0.11"
+    ],
+    "repository": "TestableIO/System.IO.Abstractions",
+    "commit": "b6e34e50fe50e5e41aebbbdf29c5a03489912727",
+    "commitEvidence": "Installed NuGet nuspec repository commit",
+    "path": "LICENSE",
+    "url": "https://github.com/TestableIO/System.IO.Abstractions/blob/b6e34e50fe50e5e41aebbbdf29c5a03489912727/LICENSE",
+    "gitBlobSha1": "64C7AF08BE001F0E338DCEA519613DA3CE6C370B",
+    "sha256": "9B4F46DC8E65BB14714479EB4DE76B7A1E2E7F9EFF7AB1EB0E9DEA712F19B1ED"
+  },
+  {
+    "packages": [
+      "Testably.Abstractions.FileSystem.Interface-9.0.0"
+    ],
+    "repository": "Testably/Testably.Abstractions",
+    "commit": "e3f60b39df247720d64485067b2f30abcb9a63f1",
+    "commitEvidence": "Installed NuGet nuspec repository commit",
+    "path": "LICENSE",
+    "url": "https://github.com/Testably/Testably.Abstractions/blob/e3f60b39df247720d64485067b2f30abcb9a63f1/LICENSE",
+    "gitBlobSha1": "ED9ABE46D76FFAB09AA9F29656BACDCC4A9EB7A1",
+    "sha256": "024F2E034EA52D1B47BE884BDA1BD9B776CEDDBFB2A7CC4D49F79255C8ED483C"
+  },
+  {
+    "packages": [
+      "TaskScheduler-2.12.1"
+    ],
+    "repository": "dahall/TaskScheduler",
+    "commit": "0d846033bca54bc5a9a9a57e711df104736622b4",
+    "commitEvidence": "Installed NuGet nuspec repository commit",
+    "path": "license.md",
+    "url": "https://github.com/dahall/TaskScheduler/blob/0d846033bca54bc5a9a9a57e711df104736622b4/license.md",
+    "gitBlobSha1": "7A82EA9D3C30F378F3F4F36904457FFED837B596",
+    "sha256": "05D265A73E2B97F59751CB993632E690F66B60D717A09C94126EECA673C9A9BA"
+  },
+  {
+    "packages": [
+      "TestableIO.System.IO.Abstractions.Analyzers-2022.0.0"
+    ],
+    "repository": "TestableIO/System.IO.Abstractions.Analyzers",
+    "commit": "049a60011e3fbc0f3d3fe54f1dfcec561deebae3",
+    "commitEvidence": "Upstream tag v2022.0.0",
+    "path": "LICENSE",
+    "url": "https://github.com/TestableIO/System.IO.Abstractions.Analyzers/blob/049a60011e3fbc0f3d3fe54f1dfcec561deebae3/LICENSE",
+    "gitBlobSha1": "9C41966D0C1080547BD0593CBAD0DD37805C8E0C",
+    "sha256": "064D5B3D005ABE62CA8ACB51397D403BC8362731DA4473E1330F98460C4E6ABD"
+  }
+]

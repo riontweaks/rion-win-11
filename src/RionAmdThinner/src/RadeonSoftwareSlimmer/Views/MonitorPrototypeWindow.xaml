@@ -1,0 +1,463 @@
+<Window x:Class="RadeonSoftwareSlimmer.Views.MonitorPrototypeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:conv="clr-namespace:RadeonSoftwareSlimmer.Converters"
+        Title="Installation Monitor — Prototype"
+        Height="780" Width="560" MinHeight="620" MinWidth="480"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="False"
+        Background="Transparent" ResizeMode="CanResize" ShowInTaskbar="True"
+        TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="ClearType"
+        FontFamily="{DynamicResource P.FontText}" UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="46" ResizeBorderThickness="7"
+                            CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Window.Resources>
+
+        <!-- ============ black-glass design tokens (window-local, isolated) ============ -->
+
+        <!-- self-contained converters so the window loads even without the app resource dictionary -->
+        <conv:BoolToVisibilityConverter x:Key="P.BoolToVis"/>
+        <conv:CountToVisibilityConverter x:Key="P.ZeroToVis" Invert="True"/>
+        <conv:EmptyStringToVisibilityConverter x:Key="P.EmptyStrToVis"/>
+
+        <FontFamily x:Key="P.FontDisplay">pack://application:,,,/Rion Win 11;component/Assets/Fonts/#Barlow</FontFamily>
+        <FontFamily x:Key="P.FontText">pack://application:,,,/Rion Win 11;component/Assets/Fonts/#Source Sans 3</FontFamily>
+
+        <!-- translucent dark scrim that sits over the acrylic backdrop -->
+        <SolidColorBrush x:Key="P.Scrim" Color="#59151515"/>
+        <SolidColorBrush x:Key="P.ScrimSolid" Color="#F21A1A1A"/>
+        <!-- glass sub-surface -->
+        <SolidColorBrush x:Key="P.Glass" Color="#14FFFFFF"/>
+        <SolidColorBrush x:Key="P.GlassStrong" Color="#1FFFFFFF"/>
+        <SolidColorBrush x:Key="P.TrackBg" Color="#1AFFFFFF"/>
+
+        <SolidColorBrush x:Key="P.Text" Color="#FFF4F4F5"/>
+        <SolidColorBrush x:Key="P.TextDim" Color="#B8FFFFFF"/>
+        <SolidColorBrush x:Key="P.TextFaint" Color="#7DFFFFFF"/>
+
+        <SolidColorBrush x:Key="P.Accent" Color="#FFE81123"/>
+
+        <!-- status families -->
+        <SolidColorBrush x:Key="P.Neutral" Color="#8FA9B4C4"/>
+        <SolidColorBrush x:Key="P.Active"  Color="#FF4CA3FF"/>
+        <SolidColorBrush x:Key="P.Success" Color="#FF5BD08A"/>
+        <SolidColorBrush x:Key="P.Caution" Color="#FFF5C542"/>
+        <SolidColorBrush x:Key="P.Danger"  Color="#FFF2555A"/>
+
+        <!-- polished-glass edge: bright at the top, fading down -->
+        <LinearGradientBrush x:Key="P.GlossEdge" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#38FFFFFF" Offset="0"/>
+            <GradientStop Color="#12FFFFFF" Offset="0.45"/>
+            <GradientStop Color="#05FFFFFF" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="P.CardGlossEdge" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#26FFFFFF" Offset="0"/>
+            <GradientStop Color="#0DFFFFFF" Offset="0.5"/>
+            <GradientStop Color="#05FFFFFF" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- glossy accent fill for the progress bar -->
+        <LinearGradientBrush x:Key="P.FillGloss" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFFF5964" Offset="0"/>
+            <GradientStop Color="#FFE81123" Offset="0.55"/>
+            <GradientStop Color="#FFBE0D1B" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Style x:Key="P.H1" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource P.FontDisplay}"/>
+            <Setter Property="FontSize" Value="23"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="P.Body" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="13.5"/>
+            <Setter Property="Foreground" Value="{StaticResource P.TextDim}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineHeight" Value="19"/>
+        </Style>
+
+        <Style x:Key="P.Caption" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource P.TextFaint}"/>
+        </Style>
+
+        <Style x:Key="P.ListItem" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="Foreground" Value="{StaticResource P.TextDim}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
+
+        <!-- caption buttons: crisp vector glyphs, no icon font -->
+        <Style x:Key="P.CapGlyph" TargetType="Path">
+            <Setter Property="Stroke" Value="{StaticResource P.TextDim}"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="P.CapButton" TargetType="Button">
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+            <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#0DFFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="P.CapCloseButton" TargetType="Button" BasedOn="{StaticResource P.CapButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="0,11,0,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#FFC50E1E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- pill / glass button used in the hero + footer -->
+        <Style x:Key="P.GlassButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource P.GlassStrong}"/>
+            <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource P.CardGlossEdge}"/>
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="18,9"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="b" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="P.AccentButton" TargetType="Button" BasedOn="{StaticResource P.GlassButton}">
+            <Setter Property="Background" Value="{StaticResource P.Accent}"/>
+            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#FFC50E1E"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- link-style button -->
+        <Style x:Key="P.LinkButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource P.TextFaint}"/>
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- small button for the prototype control strip -->
+        <Style x:Key="P.ChipButton" TargetType="Button">
+            <Setter Property="Background" Value="#14FFFFFF"/>
+            <Setter Property="Foreground" Value="{StaticResource P.TextDim}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#14FFFFFF"/>
+            <Setter Property="FontFamily" Value="{StaticResource P.FontText}"/>
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,0,6,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                CornerRadius="7" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <!-- ROOT GLASS SHELL -->
+    <Border x:Name="RootShell" CornerRadius="11" Background="{StaticResource P.Scrim}"
+            BorderThickness="1" BorderBrush="{StaticResource P.GlossEdge}">
+        
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="46"/>   <!-- caption -->
+                <RowDefinition Height="Auto"/> <!-- hero -->
+                <RowDefinition Height="Auto"/> <!-- progress -->
+                <RowDefinition Height="*"/>    <!-- queued card -->
+                <RowDefinition Height="Auto"/> <!-- footer -->
+                <RowDefinition Height="Auto"/> <!-- prototype strip -->
+            </Grid.RowDefinitions>
+
+            <!-- ================= CAPTION ================= -->
+            <Grid Grid.Row="0">
+                <StackPanel Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <Border Width="24" Height="24" CornerRadius="6" Background="{StaticResource P.Accent}">
+                        
+                        <TextBlock Text="R" FontFamily="{StaticResource P.FontDisplay}" FontWeight="Bold" FontSize="13"
+                                   Foreground="#FFFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Rion AMD Manager" Margin="10,0,0,0" VerticalAlignment="Center"
+                               FontFamily="{StaticResource P.FontText}" FontSize="12.5" FontWeight="SemiBold"
+                               Foreground="{StaticResource P.Text}"/>
+                    <Border Width="1" Height="14" Background="#26FFFFFF" Margin="10,0"/>
+                    <TextBlock Text="Installation Monitor" VerticalAlignment="Center"
+                               FontFamily="{StaticResource P.FontText}" FontSize="12.5" Foreground="{StaticResource P.TextFaint}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!-- minimise: a single line -->
+                    <Button x:Name="btnMin" Style="{StaticResource P.CapButton}" Click="btnMin_Click" ToolTip="Minimise">
+                        <Path Style="{StaticResource P.CapGlyph}" Data="M0,0 H10"/>
+                    </Button>
+                    <!-- maximise / restore: a box (swapped to a double box while maximised, in code-behind) -->
+                    <Button x:Name="btnMax" Style="{StaticResource P.CapButton}" Click="btnMax_Click" ToolTip="Maximise">
+                        <Path x:Name="btnMaxGlyph" Style="{StaticResource P.CapGlyph}"
+                              Data="M0.5,0.5 H9.5 V9.5 H0.5 Z"/>
+                    </Button>
+                    <!-- close: an X -->
+                    <Button x:Name="btnClose" Style="{StaticResource P.CapCloseButton}" Click="btnClose_Click" ToolTip="Close">
+                        <Path Style="{StaticResource P.CapGlyph}" Data="M0,0 L10,10 M10,0 L0,10"/>
+                    </Button>
+                </StackPanel>
+
+                <Border Height="1" VerticalAlignment="Bottom" Background="#14FFFFFF"/>
+            </Grid>
+
+            <!-- ================= HERO STATE ================= -->
+            <StackPanel x:Name="Hero" Grid.Row="1" Margin="24,22,24,6">
+                <StackPanel Orientation="Horizontal">
+                    <Grid Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,11,0">
+                        <Ellipse x:Name="StatusGlow" Width="12" Height="12" Fill="{StaticResource P.Neutral}" Opacity="0.35"/>
+                        <Ellipse x:Name="StatusDot"  Width="8"  Height="8"  Fill="{StaticResource P.Neutral}"/>
+                    </Grid>
+                    <TextBlock x:Name="txtPhase" Style="{StaticResource P.H1}" Text="{Binding PhaseLabel}"/>
+                </StackPanel>
+                <TextBlock x:Name="txtDetail" Style="{StaticResource P.Body}" Margin="23,8,0,0" Text="{Binding Detail}"/>
+            </StackPanel>
+
+            <!-- ================= PROGRESS ================= -->
+            <StackPanel Grid.Row="2" Margin="24,14,24,4">
+                <!-- descriptive activity tag instead of a precise %/time readout -->
+                <TextBlock x:Name="txtActivity" Style="{StaticResource P.Caption}" Margin="0,0,0,7"
+                           Text="{Binding ActivityTag}"
+                           Visibility="{Binding ActivityTag, Converter={StaticResource P.EmptyStrToVis}}"/>
+
+                <Border x:Name="ProgressHost" Height="10" CornerRadius="5" Background="{StaticResource P.TrackBg}"
+                        ClipToBounds="True" SizeChanged="ProgressHost_SizeChanged">
+                    <Grid>
+                        <Border x:Name="ProgressFill" HorizontalAlignment="Left" Width="0" CornerRadius="5"
+                                Background="{StaticResource P.FillGloss}">
+                            <Border CornerRadius="5,5,0,0" Height="4" VerticalAlignment="Top" Margin="1,1,1,0"
+                                    Background="#40FFFFFF"/>
+                        </Border>
+                        <Border x:Name="Shimmer" HorizontalAlignment="Left" Width="120" CornerRadius="5"
+                                Visibility="Collapsed" RenderTransformOrigin="0,0">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="ShimmerShift" X="-120"/>
+                            </Border.RenderTransform>
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#00E81123" Offset="0"/>
+                                    <GradientStop Color="#99FF5964" Offset="0.5"/>
+                                    <GradientStop Color="#00E81123" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!-- ================= QUEUED CARD ================= -->
+            <Border Grid.Row="3" Margin="24,16,24,8" CornerRadius="12" Background="{StaticResource P.Glass}"
+                    BorderThickness="1" BorderBrush="{StaticResource P.CardGlossEdge}" Padding="18,16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="QUEUED TO APPLY AFTER THE DRIVER INSTALL" Style="{StaticResource P.Caption}"/>
+
+                        <TextBlock Text="Service &amp; task changes" Margin="0,14,0,0"
+                                   FontFamily="{StaticResource P.FontText}" FontSize="12.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource P.Text}"/>
+                        <ItemsControl ItemsSource="{Binding PlannedServiceChanges}" Margin="0,5,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="14"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse Width="4" Height="4" Fill="{StaticResource P.TextFaint}"
+                                                 VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding}" Style="{StaticResource P.ListItem}" Margin="0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="None selected." Style="{StaticResource P.ListItem}" Opacity="0.5"
+                                   Visibility="{Binding PlannedServiceChanges.Count, Converter={StaticResource P.ZeroToVis}}"/>
+
+                        <Grid Margin="0,16,0,0">
+                            <TextBlock Text="GPU tweaks" VerticalAlignment="Center"
+                                       FontFamily="{StaticResource P.FontText}" FontSize="12.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource P.Text}"/>
+                            <Button Content="Skip GPU tweaks" HorizontalAlignment="Right" Style="{StaticResource P.LinkButton}"
+                                    Click="btnSkipTweaks_Click"
+                                    Visibility="{Binding ShowSkipTweaks, Converter={StaticResource P.BoolToVis}}"/>
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding PlannedGpuTweaks}" Margin="0,5,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="14"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse Width="4" Height="4" Fill="{StaticResource P.TextFaint}"
+                                                 VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding}" Style="{StaticResource P.ListItem}" Margin="0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="None queued." Style="{StaticResource P.ListItem}" Opacity="0.5"
+                                   Visibility="{Binding PlannedGpuTweaks.Count, Converter={StaticResource P.ZeroToVis}}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- ================= FOOTER ================= -->
+            <Grid Grid.Row="4" Margin="24,4,24,18">
+                <Button Content="{Binding PrimaryActionText}" Style="{StaticResource P.AccentButton}"
+                        HorizontalAlignment="Left" Click="btnPrimary_Click"
+                        Visibility="{Binding ShowPrimaryAction, Converter={StaticResource P.BoolToVis}}"/>
+                <Button x:Name="btnFinish" Content="Finish and Export" Style="{StaticResource P.GlassButton}"
+                        HorizontalAlignment="Right" IsEnabled="{Binding IsFinished}" Click="btnFinish_Click"/>
+            </Grid>
+
+            <!-- ================= PROTOTYPE CONTROL STRIP (not shipping UI) ================= -->
+            <Border Grid.Row="5" Background="#26000000" BorderThickness="0,1,0,0" BorderBrush="#14FFFFFF"
+                    CornerRadius="0,0,11,11" Padding="18,12,18,14">
+                <StackPanel>
+                    <TextBlock Text="PROTOTYPE CONTROLS · NOT PART OF THE SHIPPING UI" Style="{StaticResource P.Caption}"
+                               Foreground="#66FFFFFF"/>
+                    <WrapPanel Margin="0,9,0,0">
+                        <Button Content="Play simulated install" Style="{StaticResource P.ChipButton}"
+                                Background="#33E81123" BorderBrush="#55E81123" Foreground="{StaticResource P.Text}"
+                                Click="sim_Click"/>
+                        <Button Content="Reset" Style="{StaticResource P.ChipButton}" Click="reset_Click"/>
+                        <Border Width="1" Height="16" Background="#1FFFFFFF" Margin="2,0,8,6" VerticalAlignment="Center"/>
+                        <Button Content="Waiting"          Style="{StaticResource P.ChipButton}" Tag="Waiting"          Click="state_Click"/>
+                        <Button Content="Preparing"        Style="{StaticResource P.ChipButton}" Tag="Preparing"        Click="state_Click"/>
+                        <Button Content="Detecting GPU"    Style="{StaticResource P.ChipButton}" Tag="DetectingGpu"     Click="state_Click"/>
+                        <Button Content="Installer open"   Style="{StaticResource P.ChipButton}" Tag="InstallerOpen"    Click="state_Click"/>
+                        <Button Content="Downloading"      Style="{StaticResource P.ChipButton}" Tag="Downloading"      Click="state_Click"/>
+                        <Button Content="Installing"       Style="{StaticResource P.ChipButton}" Tag="InstallingDriver" Click="state_Click"/>
+                        <Button Content="Component done"   Style="{StaticResource P.ChipButton}" Tag="ComponentComplete" Click="state_Click"/>
+                        <Button Content="Verifying"        Style="{StaticResource P.ChipButton}" Tag="Verifying"        Click="state_Click"/>
+                        <Button Content="Applying services" Style="{StaticResource P.ChipButton}" Tag="ApplyingServiceChanges" Click="state_Click"/>
+                        <Button Content="Applying tweaks"  Style="{StaticResource P.ChipButton}" Tag="ApplyingTweaks"   Click="state_Click"/>
+                        <Button Content="Complete"         Style="{StaticResource P.ChipButton}" Tag="Complete"         Click="state_Click"/>
+                        <Button Content="Warning"          Style="{StaticResource P.ChipButton}" Tag="Warning"          Click="state_Click"/>
+                        <Button Content="Error"            Style="{StaticResource P.ChipButton}" Tag="Error"            Click="state_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

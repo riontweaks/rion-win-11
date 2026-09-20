@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="RionHub.Modules.Tools.Windows.WindowsToolsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tools="clr-namespace:RionHub.Modules.Tools" tools:ToolLayout.TrackSize="True" FontFamily="{StaticResource AppFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal" xmlns:windows="clr-namespace:RionHub.Modules.Tools.Windows">
+  <FrameworkElement.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../ToolStyles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </FrameworkElement.Resources>
+  <DockPanel Margin="24,14,24,18">
+    <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource Divider}" BorderThickness="0,1,0,0" Padding="0,14,0,0" Margin="0,10,0,0" Visibility="{Binding IsUtilitiesView, Converter={StaticResource InvBoolToVis}}">
+      <StackPanel>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource ToolCaption}" VerticalAlignment="Center" Margin="0,0,12,0">
+          <Run Text="{Binding SelectedCount, Mode=OneWay}" />
+          <Run Text=" selected in this tab" />
+        </TextBlock>
+        <Button Grid.Column="1" Content="Install selected" Style="{StaticResource ToolPrimaryButton}" Command="{Binding InstallSelectedCommand}" />
+      </Grid>
+      <TextBlock Text="{Binding InstallStatus}" Style="{StaticResource ToolCaption}" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite" Visibility="{Binding InstallStatus, Converter={StaticResource EmptyStrToVis}}" />
+      <Expander Header="Installation results" Margin="0,6,0,0" Visibility="{Binding HasInstallResults, Converter={StaticResource StdBoolToVis}}">
+        <ScrollViewer MaxHeight="120" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding InstallResults}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource ToolCaption}" Margin="0,4,0,0" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+        </ScrollViewer>
+      </Expander>
+      </StackPanel>
+    </Border>
+    <StackPanel DockPanel.Dock="Top">
+      <TextBlock Text="Apps and runtimes" Style="{StaticResource ToolHeading}" />
+      <TextBlock Text="Select apps or runtimes, then install them together." Style="{StaticResource ToolCaption}" Margin="0,5,0,16" />
+      <WrapPanel Margin="0,0,0,12">
+        <RadioButton Content="Apps" GroupName="InstallerTab" Style="{StaticResource ToolTab}" IsChecked="{Binding IsAppsView, Mode=OneWay}" Click="AppsToggle_Click" />
+        <RadioButton Content="Windows apps" GroupName="InstallerTab" Style="{StaticResource ToolTab}" IsChecked="{Binding IsWindowsAppsView, Mode=OneWay}" Click="WindowsAppsToggle_Click" />
+        <RadioButton Content="Runtimes" GroupName="InstallerTab" Style="{StaticResource ToolTab}" IsChecked="{Binding IsRuntimesView, Mode=OneWay}" Click="RuntimesToggle_Click" />
+      </WrapPanel>
+    </StackPanel>
+    <ScrollViewer x:Name="CatalogScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel>
+        <Expander Header="Windows health and Store repair" Margin="0,0,0,16">
+          <StackPanel Margin="0,12,0,0">
+            <TextBlock Text="Health switches apply immediately. Store repair runs when selected." Style="{StaticResource ToolCaption}" Margin="0,0,0,12" />
+            <ItemsControl ItemsSource="{Binding HealthRows}" Margin="0,0,0,8">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Style="{StaticResource ToolRow}" tools:ToolLayout.TrackSize="True" Margin="0" Padding="12">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                      </Grid.RowDefinitions>
+                      <StackPanel>
+                        <TextBlock Style="{StaticResource ToolTitle}" Text="{Binding Title}" />
+                        <TextBlock Style="{StaticResource ToolCaption}" Margin="0,4,0,0" Text="{Binding Summary}" />
+                        <TextBlock Style="{StaticResource ToolCaption}" Foreground="{StaticResource CautionCol}" Margin="0,8,0,0" Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource EmptyStrToVis}}" />
+                      </StackPanel>
+                      <ContentControl Style="{StaticResource ToolAction}">
+                        <ToggleButton Style="{StaticResource ToolSwitch}" IsChecked="{Binding IsOn}" AutomationProperties.Name="{Binding Title}" />
+                      </ContentControl>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Style="{StaticResource ToolRow}" tools:ToolLayout.TrackSize="True" Margin="0" Padding="12">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                  <TextBlock Text="Microsoft Store" Style="{StaticResource ToolTitle}" />
+                  <TextBlock Text="Repair the Store when apps cannot download or install." Style="{StaticResource ToolCaption}" Margin="0,4,0,0" />
+                  <TextBlock Style="{StaticResource ToolCaption}" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite" Text="{Binding StoreFixResult}" Visibility="{Binding StoreFixResult, Converter={StaticResource EmptyStrToVis}}" />
+                </StackPanel>
+                <ContentControl Style="{StaticResource ToolAction}">
+                  <Button Content="Repair Store" Style="{StaticResource ToolButton}" Command="{Binding StoreFixCommand}" />
+                </ContentControl>
+              </Grid>
+            </Border>
+          </StackPanel>
+        </Expander>
+        <ItemsControl IsEnabled="{Binding CanEditSelection}" ItemsPanel="{StaticResource ToolCardPanel}" ItemTemplate="{StaticResource ToolInstallRow}" ItemsSource="{Binding Apps}" Visibility="{Binding IsAppsView, Converter={StaticResource StdBoolToVis}}" />
+        <ItemsControl IsEnabled="{Binding CanEditSelection}" ItemsPanel="{StaticResource ToolCardPanel}" ItemTemplate="{StaticResource ToolInstallRow}" ItemsSource="{Binding WindowsApps}" Visibility="{Binding IsWindowsAppsView, Converter={StaticResource StdBoolToVis}}" />
+        <StackPanel Margin="0,0,0,12" Visibility="{Binding IsRuntimesView, Converter={StaticResource StdBoolToVis}}">
+          <TextBlock Text="Install the dependencies your apps need. Both x86 and x64 can be needed on a 64-bit PC." Style="{StaticResource ToolCaption}" />
+          <WrapPanel IsEnabled="{Binding CanEditSelection}" Margin="0,10,0,6">
+            <Button Content="Select all" Margin="0,0,8,6" Command="{Binding SelectAllRuntimesCommand}" />
+            <Button Content="VC++ v14 + DirectX" Margin="0,0,8,6" Command="{Binding SelectCurrentRuntimesCommand}" />
+            <Button Content="Clear selection" Margin="0,0,0,6" Command="{Binding ClearRuntimesCommand}" />
+          </WrapPanel>
+          <CheckBox IsEnabled="{Binding CanEditSelection}" Content="Show installer options" Margin="0,0,0,10" ToolTip="Open each runtime installer so you can review its available setup options." IsChecked="{Binding ShowRuntimeInstallers}" />
+          <TextBlock Text="Older VC++ versions are for legacy apps. .NET versions install side by side; select the version an app requests." Style="{StaticResource ToolCaption}" />
+        </StackPanel>
+        <ItemsControl IsEnabled="{Binding CanEditSelection}" ItemsPanel="{StaticResource ToolCardPanel}" ItemTemplate="{StaticResource ToolInstallRow}" ItemsSource="{Binding Runtimes}" Visibility="{Binding IsRuntimesView, Converter={StaticResource StdBoolToVis}}" />
+
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

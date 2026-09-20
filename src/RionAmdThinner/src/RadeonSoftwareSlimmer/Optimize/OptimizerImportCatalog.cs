@@ -1,0 +1,1 @@
+namespace RadeonSoftwareSlimmer.Optimize; public static class OptimizerImportCatalog { public static string GroupFor(SystemTweak t,string group=null)=>TweakSections.For(t); }

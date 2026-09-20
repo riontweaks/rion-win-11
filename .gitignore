@@ -1,0 +1,55 @@
+# Generated builds, installer caches and local migration state
+**/bin/
+**/obj/
+**/artifacts/
+**/TestResults/
+**/publish/
+**/publish-tmp/
+**/dist/
+dist/
+artifacts/
+.workspace/
+.vs/
+*.user
+*.suo
+*.log
+*.sync-tmp
+# Never commit signing keys or local credentials
+*.pfx
+*.p12
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+# Local compatibility directories
+/RionSuite/
+/RionAmdThinner/
+/ALDX/
+/Nvidia/
+/NvidiaDriverTool/
+/Power Settings Explorer/
+/RionRemote/
+/ThemeDemo/
+/PortalDemo/
+/gpu-api-reference/
+/src/ALDX/third_party/
+/src/Power Settings Explorer/decompiled/
+/src/Power Settings Explorer/SCEWIN/
+
+# Local research snapshots and test output
+**/research/
+**/test-output*.txt
+
+# Private workspace instructions, handoffs and ad-hoc root artifacts
+/AGENTS.md
+/CLAUDE.md
+/PROJECT_HANDOFF.md
+/*-smoke.png
+/auto-*.png
+/website.zip
+
+# Customer-specific inputs never belong in source control.
+Customer Builder/customer.txt
+Customer Builder/*.json
+Customer Builder/*.exe

@@ -1,0 +1,22 @@
+<UserControl x:Class="NvidiaDriverTool.Views.FinishStepView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        FontFamily="{StaticResource AppFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal">
+    <StackPanel Margin="0,10,0,0">
+        <Border Style="{StaticResource GoodBadge}" HorizontalAlignment="Left" Padding="10,5">
+            <TextBlock Text="Install complete" Foreground="{StaticResource GoodCol}" FontWeight="SemiBold"/>
+        </Border>
+        <TextBlock Style="{StaticResource Caption}" Margin="0,16,0,0">
+            <Run Text="Driver version "/><Run Text="{Binding DriverVersion, Mode=OneWay}"/>
+        </TextBlock>
+        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0">
+            <Run Text="{Binding InstalledCount, Mode=OneWay}"/><Run Text=" component(s) selected for installation, "/>
+            <Run Text="{Binding ExcludedCount, Mode=OneWay}"/><Run Text=" excluded."/>
+        </TextBlock>
+        <TextBlock Text="A restart is recommended before using the GPU." Margin="0,14,0,0" TextWrapping="Wrap"/>
+        <WrapPanel Margin="0,18,0,0">
+            <Button Visibility="{Binding ShowAdvancedTools, Converter={StaticResource StdBoolToVis}}" Content="GPU tweaks, monitor and startup services" Command="{Binding OpenPostInstallCommand}" Margin="0,0,8,8"/>
+            <Button Content="Modify driver packages" Command="{Binding ModifyPackagesCommand}" Margin="0,0,0,8"/>
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

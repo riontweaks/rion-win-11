@@ -1,0 +1,1 @@
+namespace RadeonSoftwareSlimmer.Optimize; public static class TweakSections { public static string For(SystemTweak t,string group=null)=>t.Id.StartsWith("mmcss-")||t.Id=="system-responsiveness"?"MMCSS":t.Category==TweakCategory.Graphics?"Graphics & gaming":"Performance & power"; }

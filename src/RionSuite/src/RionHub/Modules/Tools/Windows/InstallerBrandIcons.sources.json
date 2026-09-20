@@ -1,0 +1,149 @@
+[
+  {
+    "title": "7Zip",
+    "slug": "7zip",
+    "hex": "000000",
+    "source": "https://commons.wikimedia.org/wiki/File:7ziplogo.svg"
+  },
+  {
+    "title": "AnyDesk",
+    "slug": "anydesk",
+    "hex": "EF443B",
+    "source": "https://anydesk.com"
+  },
+  {
+    "title": "Battle.net",
+    "slug": "battledotnet",
+    "hex": "4381C3",
+    "source": "https://battle.net"
+  },
+  {
+    "title": "Brave",
+    "slug": "brave",
+    "hex": "FB542B",
+    "source": "https://brave.com/brave-branding-assets",
+    "guidelines": "https://brave.com/brave-branding-assets"
+  },
+  {
+    "title": "Discord",
+    "slug": "discord",
+    "hex": "5865F2",
+    "source": "https://discord.com/branding",
+    "guidelines": "https://discord.com/branding"
+  },
+  {
+    "title": "EA",
+    "slug": "ea",
+    "hex": "000000",
+    "source": "https://www.ea.com"
+  },
+  {
+    "title": "Epic Games",
+    "slug": "epicgames",
+    "hex": "313131",
+    "source": "https://dev.epicgames.com/docs/services/en-US/EpicAccountServices/DesignGuidelines/index.html#epicgamesbrandguidelines",
+    "guidelines": "https://dev.epicgames.com/docs/services/en-US/EpicAccountServices/DesignGuidelines/index.html#epicgamesbrandguidelines"
+  },
+  {
+    "title": "GOG.com",
+    "slug": "gogdotcom",
+    "hex": "86328A",
+    "source": "https://www.cdprojekt.com/en/media/logotypes/"
+  },
+  {
+    "title": "Google Chrome",
+    "slug": "googlechrome",
+    "hex": "4285F4",
+    "source": "https://www.google.com/chrome",
+    "guidelines": "https://partnermarketinghub.withgoogle.com/brands/chrome"
+  },
+  {
+    "title": "Malwarebytes",
+    "slug": "malwarebytes",
+    "hex": "0D3ECC",
+    "source": "https://www.malwarebytes.com"
+  },
+  {
+    "title": "Firefox",
+    "slug": "firefox",
+    "hex": "FF7139",
+    "source": "https://mozilla.design/firefox/logos-usage/",
+    "guidelines": "https://mozilla.design/firefox/logos-usage/"
+  },
+  {
+    "title": "Notepad++",
+    "slug": "notepadplusplus",
+    "hex": "90E59A",
+    "source": "https://github.com/notepad-plus-plus/notepad-plus-plus/blob/1f2c63cce173e3e1dc5922637c81a851693e2856/PowerEditor/misc/chameleon/chameleon-pencil.eps"
+  },
+  {
+    "title": "OBS Studio",
+    "slug": "obsstudio",
+    "hex": "302E31",
+    "source": "https://commons.wikimedia.org/wiki/File:OBS.svg"
+  },
+  {
+    "title": "Opera",
+    "slug": "opera",
+    "hex": "FF1B2D",
+    "source": "https://brand.opera.com/1472-2/opera-logos/",
+    "guidelines": "https://brand.opera.com"
+  },
+  {
+    "title": "qbittorrent",
+    "slug": "qbittorrent",
+    "hex": "2F67BA",
+    "source": "https://github.com/qbittorrent/qBittorrent/blob/73028f9930d9ab9d89edb60ed4aedb66d75669d9/src/icons/qbittorrent-tray-light.svg"
+  },
+  {
+    "title": "ShareX",
+    "slug": "sharex",
+    "hex": "2885F1",
+    "source": "https://getsharex.com/brand-assets"
+  },
+  {
+    "title": "Spotify",
+    "slug": "spotify",
+    "hex": "1ED760",
+    "source": "https://developer.spotify.com/documentation/general/design-and-branding/#using-our-logo",
+    "guidelines": "https://developer.spotify.com/documentation/general/design-and-branding/#using-our-logo"
+  },
+  {
+    "title": "Steam",
+    "slug": "steam",
+    "hex": "000000",
+    "source": "https://partner.steamgames.com/doc/marketing/branding",
+    "guidelines": "https://partner.steamgames.com/doc/marketing/branding"
+  },
+  {
+    "title": "TeamViewer",
+    "slug": "teamviewer",
+    "hex": "050A52",
+    "source": "https://www.teamviewer.com"
+  },
+  {
+    "title": "Ubisoft",
+    "slug": "ubisoft",
+    "hex": "000000",
+    "source": "https://www.ubisoft.com/en-US/company/overview.aspx"
+  },
+  {
+    "title": "Vencord",
+    "slug": "vencord",
+    "hex": "EB7396",
+    "source": "https://github.com/Vencord/Vesktop/blob/1f17c18362b12a9e8af21e571e844d05bda87ff5/build/icon.svg"
+  },
+  {
+    "title": "VLC media player",
+    "slug": "vlcmediaplayer",
+    "hex": "FF8800",
+    "source": "https://code.videolan.org/videolan/vlc/-/blob/1ce7f686ee17a028d2d79627ae69f22d905f2e23/extras/package/macosx/asset_sources/vlc_app_icon.svg"
+  },
+  {
+    "title": "Zoom",
+    "slug": "zoom",
+    "hex": "0B5CFF",
+    "source": "https://brand.zoom.us/media-library/",
+    "guidelines": "https://brand.zoom.us/usage-legal/"
+  }
+]

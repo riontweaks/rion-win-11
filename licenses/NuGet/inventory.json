@@ -1,0 +1,130 @@
+[
+  {
+    "name": "Microsoft.NET.ILLink.Tasks",
+    "version": "8.0.31",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "Microsoft.Win32.Registry",
+    "version": "5.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "git://github.com/dotnet/runtime"
+  },
+  {
+    "name": "Newtonsoft.Json",
+    "version": "13.0.3",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/JamesNK/Newtonsoft.Json"
+  },
+  {
+    "name": "SonarAnalyzer.CSharp",
+    "version": "10.7.0.110445",
+    "licenseType": "file",
+    "license": "LICENSE.txt",
+    "licenseUrl": "https://aka.ms/deprecateLicenseUrl",
+    "source": "https://github.com/SonarSource/sonar-dotnet"
+  },
+  {
+    "name": "System.CodeDom",
+    "version": "8.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "System.Diagnostics.EventLog",
+    "version": "9.0.2",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "System.IO.Abstractions",
+    "version": "22.0.11",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/TestableIO/System.IO.Abstractions.git"
+  },
+  {
+    "name": "System.Management",
+    "version": "8.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "System.Security.AccessControl",
+    "version": "6.0.1",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "System.Security.Principal.Windows",
+    "version": "5.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "git://github.com/dotnet/runtime"
+  },
+  {
+    "name": "System.ServiceProcess.ServiceController",
+    "version": "9.0.2",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dotnet/runtime"
+  },
+  {
+    "name": "TaskScheduler",
+    "version": "2.12.1",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/dahall/taskscheduler"
+  },
+  {
+    "name": "TestableIO.System.IO.Abstractions",
+    "version": "22.0.11",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/TestableIO/System.IO.Abstractions.git"
+  },
+  {
+    "name": "TestableIO.System.IO.Abstractions.Analyzers",
+    "version": "2022.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/TestableIO/System.IO.Abstractions.Analyzers.git"
+  },
+  {
+    "name": "TestableIO.System.IO.Abstractions.Wrappers",
+    "version": "22.0.11",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/TestableIO/System.IO.Abstractions.git"
+  },
+  {
+    "name": "Testably.Abstractions.FileSystem.Interface",
+    "version": "9.0.0",
+    "licenseType": "expression",
+    "license": "MIT",
+    "licenseUrl": "https://licenses.nuget.org/MIT",
+    "source": "https://github.com/Testably/Testably.Abstractions.git"
+  }
+]

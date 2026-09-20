@@ -1,0 +1,1 @@
+namespace RionHub.Modules.Tools; public sealed class ToolsViewModel { private General.GeneralTweaksViewModel? general; private Windows.WindowsToolsViewModel? windows; public General.GeneralTweaksViewModel General=>general??=new(); public Windows.WindowsToolsViewModel Windows=>windows??=new(); }

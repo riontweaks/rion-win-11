@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="RionHub.Modules.Tools.General.GeneralTweaksView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:RionHub.Modules.Tools.General" FontFamily="{StaticResource AppFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" RenderOptions.ClearTypeHint="Enabled" SnapsToDevicePixels="True" SizeChanged="OnViewSizeChanged">
+  <FrameworkElement.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="GeneralTweaksStyles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <CollectionViewSource x:Key="CardRows" Source="{Binding Rows}">
+        <CollectionViewSource.GroupDescriptions>
+          <PropertyGroupDescription PropertyName="DisplaySection" />
+        </CollectionViewSource.GroupDescriptions>
+      </CollectionViewSource>
+      <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}" BasedOn="{StaticResource TweakAction}" />
+      <DataTemplate x:Key="{DataTemplateKey {x:Type local:TweakBundleRowViewModel}}" DataType="{x:Type local:TweakBundleRowViewModel}">
+        <Grid Margin="0">
+          <Border Style="{StaticResource TweakGlow}" />
+          <Border Style="{StaticResource TweakCard}">
+            <StackPanel>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Column="0" Grid.Row="0">
+                  <TextBlock Style="{StaticResource TweakCardTitle}" Text="{Binding Title}" />
+                  <TextBlock Style="{StaticResource TweakCardDescription}" Text="{Binding Description}" />
+                  <Button Content="Values and testing guide" Command="{Binding SchedulingGuideCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" Visibility="{Binding HasSchedulingGuide, Converter={StaticResource BoolToVis}}"/>
+                  <WrapPanel Margin="0,9,0,0">
+                    <TextBlock Text="Experimental &#183; results vary" Style="{StaticResource TweakMetaText}" Foreground="{StaticResource CautionCol}" Visibility="{Binding Experimental, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="Recommended" Style="{StaticResource TweakMetaText}" Foreground="{StaticResource GoodCol}" Visibility="{Binding Recommended, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="Restart to apply" Style="{StaticResource TweakMetaText}" Visibility="{Binding RebootRequired, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="Inspect and restore only" Style="{StaticResource TweakMetaText}" Foreground="{StaticResource CautionCol}" Visibility="{Binding ApplyBlocked, Converter={StaticResource BoolToVis}}" />
+                  </WrapPanel>
+                </StackPanel>
+                <StackPanel Style="{StaticResource CardControls}">
+                  <ToggleButton AutomationProperties.HelpText="Applies every setting on this card. Switch off to restore the saved values." ToolTip="Applies every setting on this card. Switch off to restore the saved values." Style="{StaticResource CardSwitch}" Visibility="{Binding ShowSwitch, Converter={StaticResource BoolToVis}}" IsEnabled="{Binding CanToggle}" IsChecked="{Binding IsOn, Mode=TwoWay}" AutomationProperties.Name="{Binding Title}" />
+                  <StackPanel Style="{StaticResource CardPresetBlock}" Visibility="{Binding IsSingleAdjustable, Converter={StaticResource BoolToVis}}">
+                    <TextBlock HorizontalAlignment="Right" Margin="0,0,0,5" Style="{StaticResource TweakCaption}" Foreground="{StaticResource Text}" Text="{Binding CurrentValueLabel, StringFormat=Now {0}}" />
+                    <Grid>
+                      <Button Name="PresetButton" Content="Adjust…" AutomationProperties.HelpText="Choosing a preset applies it immediately." Command="{Binding ToggleFlyoutCommand}" AutomationProperties.Name="{Binding Title, StringFormat=Adjust {0}}" />
+                      <Popup Name="PresetPopup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" IsOpen="{Binding IsFlyoutOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=PresetButton}" Opened="OnPresetOpened" Closed="OnPresetClosed">
+                        <Border BorderThickness="1" CornerRadius="6" Padding="4" Margin="0,4,0,0" KeyboardNavigation.TabNavigation="Cycle" Background="{StaticResource ScrimSolid}" BorderBrush="{StaticResource BorderCol}" PreviewKeyDown="OnPresetKeyDown">
+                          <ItemsControl ItemsSource="{Binding Presets}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate>
+                                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,2" Style="{StaticResource TweakAction}" Content="{Binding Label}" Command="{Binding SelectCommand}" Click="OnPresetChosen" />
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </Border>
+                      </Popup>
+                    </Grid>
+                  </StackPanel>
+                </StackPanel>
+              </Grid>
+              <Border Style="{StaticResource TweakCautionSlab}" Visibility="{Binding ApplyBlocked, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                  <TextBlock Text="Apply is disabled" Style="{StaticResource TweakSlabHeading}" />
+                  <TextBlock Margin="0,4,0,0" Style="{StaticResource TweakCaption}" Text="{Binding ApplyBlockedReason}" />
+                </StackPanel>
+              </Border>
+              <Border Style="{StaticResource TweakCautionSlab}" Visibility="{Binding HasPerformanceWarning, Converter={StaticResource BoolToVis}}">
+                <TextBlock Style="{StaticResource TweakCaption}" Text="{Binding PerformanceWarning}" />
+              </Border>
+              <Expander Header="Individual settings" Margin="0,8,0,0" Style="{StaticResource TweakDisclosure}" Visibility="{Binding HasMemberAdjustments, Converter={StaticResource BoolToVis}}">
+                <ItemsControl ItemsSource="{Binding Rows}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <StackPanel Margin="0,8,0,10">
+                        <TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding Title}" />
+                        <TextBlock Margin="0,3,0,5" Style="{StaticResource TweakCaption}" Text="{Binding Summary}" />
+                        <TextBlock Style="{StaticResource TweakCaption}" Text="{Binding CurrentValueLabel, StringFormat=Current: {0}}" />
+                        <ComboBox DisplayMemberPath="Label" MinHeight="32" Margin="0,6,0,0" ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}" AutomationProperties.Name="{Binding Title}" />
+                        <WrapPanel Margin="0,6,0,0">
+                          <Button Content="Apply value" Margin="0,0,8,6" Command="{Binding SelectedPreset.SelectCommand}" IsEnabled="{Binding CanApplySelected}" />
+                          <Button Content="Revert changes" Margin="0,0,0,6" Command="{Binding RestoreSavedCommand}" />
+                        </WrapPanel>
+                        <TextBlock Style="{StaticResource TweakCaption}" Foreground="{StaticResource CautionCol}" Text="{Binding Error}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Expander>
+              <StackPanel Visibility="{Binding IsQualityOfLife, Converter={StaticResource BoolToVis}}" Margin="0,8,0,0">
+                <Button Content="Apply supported preferences" Command="{Binding ApplyQualityOfLifeCommand}" HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                <Expander Header="Individual settings" Style="{StaticResource TweakDisclosure}" Margin="0,8,0,0">
+                  <ItemsControl ItemsSource="{Binding Rows}"><ItemsControl.ItemTemplate><DataTemplate>
+                    <StackPanel Margin="0,6,0,10">
+                      <CheckBox IsChecked="{Binding IsOn, Mode=TwoWay}" IsEnabled="{Binding CanToggle}" ToolTip="{Binding TradeOff}"><TextBlock Text="{Binding Title}" TextWrapping="Wrap"/></CheckBox>
+                      <TextBlock Text="{Binding StateLabel}" Style="{StaticResource TweakCaption}" Margin="0,3,0,0"/>
+                      <Expander Header="Details" Style="{StaticResource TweakDisclosure}"><StackPanel>
+                        <TextBlock Text="{Binding Summary}" Style="{StaticResource TweakCaption}"/>
+                        <TextBlock Text="{Binding TradeOff}" Style="{StaticResource TweakCaption}" Margin="0,4,0,0"/>
+                        <Button Content="Restore saved state" Command="{Binding RestoreSavedCommand}" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                      </StackPanel></Expander>
+                      <TextBlock Text="{Binding Error}" Style="{StaticResource TweakCaption}" Foreground="{StaticResource CautionCol}" Visibility="{Binding Error, Converter={StaticResource EmptyStrToVis}}"/>
+                    </StackPanel>
+                  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                </Expander>
+              </StackPanel>
+      <Expander Header="Quality of life · Windows settings" Margin="0,8,0,0" Visibility="{Binding IsQualityOfLife, Converter={StaticResource BoolToVis}}">
+        <StackPanel Margin="0,6,0,4">
+          <TextBlock Style="{StaticResource TweakCaption}" TextWrapping="Wrap" Text="Snipping Tool stays installed. Resume and Start section visibility use the controls available in your Windows build. Startup apps and Windows Search → Manual are in Tweaks → Autoruns (Manual service options)."/>
+          <WrapPanel Margin="0,6,0,0">
+            <Button Content="Taskbar · Search / Resume" Tag="ms-settings:taskbar" Click="OpenWindowsPreference" Margin="0,0,8,6"/>
+            <Button Content="Start · Pinned / All" Tag="ms-settings:personalization-start" Click="OpenWindowsPreference" Margin="0,0,8,6"/>
+            <Button Content="All animation effects" Tag="ms-settings:easeofaccess-visualeffects" Click="OpenWindowsPreference" Margin="0,0,8,6"/>
+          </WrapPanel>
+        </StackPanel>
+      </Expander>
+              <TextBlock Margin="0,8,0,0" AutomationProperties.LiveSetting="Assertive" Style="{StaticResource TweakCaption}" Foreground="{StaticResource CautionCol}" Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource EmptyStrToVis}}" />
+              <TextBlock Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite" Style="{StaticResource TweakCaption}" Text="{Binding LastResult}" Visibility="{Binding LastResult, Converter={StaticResource EmptyStrToVis}}" />
+              <Button Content="Revert changes" HorizontalAlignment="Left" Margin="0,8,0,0" Command="{Binding RestoreSavedCommand}" Visibility="{Binding ShowRestore, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+          </Border>
+        </Grid>
+      </DataTemplate>
+    </ResourceDictionary>
+  </FrameworkElement.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0" Margin="24,16,24,0">
+      <TextBlock Text="Windows tweaks" FontFamily="{StaticResource DisplayFont}" FontSize="24" FontWeight="Bold" />
+      <ListBox Style="{StaticResource TweakFilters}" AutomationProperties.Name="Tweak category" Margin="0,8,0,12" ItemsSource="{Binding Filters}" SelectedIndex="{Binding SelectedFilterIndex}" />
+
+      <Grid Margin="0,0,0,10">
+        <TextBox MinHeight="36" Padding="10,7" AutomationProperties.Name="Search tweaks" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditTweaks}" />
+        <TextBlock Text="Search tweaks" Style="{StaticResource TweakCaption}" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="{Binding SearchText, Converter={StaticResource PlaceholderVis}}" />
+      </Grid>
+      <WrapPanel>
+        <Button Content="Apply all" Style="{StaticResource TweakPrimaryAction}" Margin="0,0,8,8" AutomationProperties.Name="Apply all tweaks" ToolTip="Reviews all sections. Individual-choice settings stay unchanged. Experimental settings require opt-in." Command="{Binding ApplyAllTweaksCommand}" />
+        <Button Content="Apply recommended shown" Margin="0,0,8,8" Command="{Binding ApplyAllCommand}" />
+      </WrapPanel>
+      <TextBlock Text="Individual settings are optional. Revert changes is available on each changed card." Style="{StaticResource TweakCaption}" Margin="0,0,0,14" />
+    </StackPanel>
+    <ScrollViewer Name="PageScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Margin="24,0,24,24">
+        <Border Style="{StaticResource TweakCard}" Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource TweakCaption}" Foreground="{StaticResource Text}" AutomationProperties.LiveSetting="Polite" Text="{Binding ResultSummary}" />
+            <Expander Name="LastOperationExpander" Header="Last operation details" Style="{StaticResource TweakDisclosure}" AutomationProperties.Name="Last operation details">
+              <ItemsControl ItemsSource="{Binding Results}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Style="{StaticResource TweakCaption}" Margin="0,3" Text="{Binding Display}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Expander>
+          </StackPanel>
+        </Border>
+        <ItemsControl Name="SettingsItems" ItemsSource="{Binding Source={StaticResource CardRows}}" IsEnabled="{Binding CanEditTweaks}">
+          <ItemsControl.GroupStyle>
+            <GroupStyle>
+              <GroupStyle.Panel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></GroupStyle.Panel>
+              <GroupStyle.ContainerStyle>
+                <Style TargetType="{x:Type GroupItem}">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <StackPanel Margin="0,0,0,18">
+                          <DockPanel Style="{StaticResource TweakSectionHeader}">
+                            <StackPanel>
+                              <WrapPanel>
+                                <TextBlock Style="{StaticResource TweakSectionTitle}" VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" />
+                                <Button Padding="6" Margin="8,0,0,0" AutomationProperties.Name="About MMCSS" Click="OnMmcssHelp">
+                                  <FrameworkElement.Style>
+                                    <Style BasedOn="{StaticResource TweakAction}" TargetType="{x:Type Button}">
+                                      <Setter Property="Visibility" Value="Collapsed" />
+                                      <Style.Triggers>
+                                        <DataTrigger Value="MMCSS" Binding="{Binding Name}">
+                                          <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                      </Style.Triggers>
+                                    </Style>
+                                  </FrameworkElement.Style>
+                                  <Path Width="16" Height="16" Stroke="{StaticResource TextDim}" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M8,1 A7,7 0 1 1 8,15A7,7 0 1 1 8,1M8,7 L8,12 M8,4 L8,4.5" />
+                                </Button>
+                              </WrapPanel>
+                              <Button Content="Check my settings" HorizontalAlignment="Left" Margin="0,8,0,0" Click="OnMmcssScan">
+                                <FrameworkElement.Style>
+                                  <Style BasedOn="{StaticResource TweakAction}" TargetType="{x:Type Button}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                      <DataTrigger Value="MMCSS" Binding="{Binding Name}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                      </DataTrigger>
+                                    </Style.Triggers>
+                                  </Style>
+                                </FrameworkElement.Style>
+                              </Button>
+                              <TextBlock Text="Multimedia Class Scheduler Service prioritizes registered audio, video and game work. These advanced settings are optional." Margin="0,6,0,0">
+                                <FrameworkElement.Style>
+                                  <Style BasedOn="{StaticResource TweakCaption}" TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                      <DataTrigger Value="MMCSS" Binding="{Binding Name}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                      </DataTrigger>
+                                    </Style.Triggers>
+                                  </Style>
+                                </FrameworkElement.Style>
+                              </TextBlock>
+                            </StackPanel>
+                          </DockPanel>
+                          <ItemsPresenter />
+                        </StackPanel>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </GroupStyle.ContainerStyle>
+            </GroupStyle>
+          </ItemsControl.GroupStyle>
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <local:CardPanel MinCardWidth="340" Gutter="12" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <TextBlock Text="No cards match this search. Try a different term or category." Margin="0,20">
+          <FrameworkElement.Style>
+            <Style BasedOn="{StaticResource TweakCaption}" TargetType="{x:Type TextBlock}">
+              <Setter Property="Visibility" Value="Collapsed" />
+              <Style.Triggers>
+                <DataTrigger Value="0" Binding="{Binding Rows.Count}">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </FrameworkElement.Style>
+        </TextBlock>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

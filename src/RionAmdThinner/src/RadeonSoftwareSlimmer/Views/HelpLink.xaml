@@ -1,0 +1,9 @@
+<UserControl x:Class="RadeonSoftwareSlimmer.Views.HelpLink"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontFamily="{DynamicResource AppFont}" UseLayoutRounding="True">
+    <Button x:Name="btnLink" Click="Button_Click" Style="{StaticResource GhostButton}"
+            Padding="6,2" VerticalAlignment="Center" ToolTip="Open the wiki page for this topic">
+        <TextBlock Text="&#xE897;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                   Foreground="{StaticResource AccentHover}"/>
+    </Button>
+</UserControl>

@@ -1,0 +1,82 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <AssemblyName>Rion Win 11</AssemblyName>
+    <RootNamespace>RionHub</RootNamespace>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\rion.ico</ApplicationIcon>
+
+    <Version>1.0.0</Version>
+    <Product>Rion Win 11</Product>
+    <Company>Rion</Company>
+    <Authors>Rion</Authors>
+    <AssemblyTitle>Rion Win 11</AssemblyTitle>
+    <Copyright>Rion</Copyright>
+
+    <!-- standalone single-file build -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!-- Keep bundle compression off for the current packaging configuration.
+         Native libraries still extract because IncludeNativeLibrariesForSelfExtract is true.
+         This setting does not establish or guarantee an antivirus verdict. -->
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RionExperimental)' == 'true'">
+    <DefineConstants>$(DefineConstants);RION_EXPERIMENTAL</DefineConstants>
+    <Product>Rion Experiment Preview</Product>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(RionExperimental)' != 'true'">
+    <Compile Remove="Modules\Experiments\**\*.cs" />
+    <Page Remove="Modules\Experiments\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Guide\guides.json" LogicalName="RionHub.Guide.guides.json" />
+    <EmbeddedResource Include="..\..\..\..\LICENSE" LogicalName="Rion.Licenses.Main.txt" />
+    <EmbeddedResource Include="..\..\..\..\THIRD_PARTY_NOTICES.md" LogicalName="Rion.Licenses.Notices.md" />
+    <EmbeddedResource Include="..\..\..\..\licenses\**\*.txt;..\..\..\..\licenses\**\*.md" LogicalName="Rion.Licenses.%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\..\RionAmdThinner\src\Shared\7-Zip\License.txt" LogicalName="Rion.Licenses.7-Zip.txt" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <Resource Include="Assets\rion.ico" />
+    <Resource Include="Assets\Fonts\*.ttf" />
+    <Resource Include="Assets\InstallerIcons\*.png" />
+    <Resource Include="Assets\CpuVendors\*.png" />
+  </ItemGroup>
+
+  <!-- Every project targets WPF only, but the self-contained WindowsDesktop runtime pack also
+       carries Windows Forms. No source references it, so it is dropped from the bundle. -->
+  <Target Name="RemoveUnusedWindowsFormsAssemblies" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+        Condition="$([System.String]::Copy('%(Filename)').StartsWith('System.Windows.Forms'))
+                or '%(Filename)' == 'WindowsFormsIntegration'" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RionAmdThinner\src\RadeonSoftwareSlimmer\RadeonSoftwareSlimmer.csproj" />
+    <ProjectReference Include="..\..\..\NvidiaDriverTool\src\NvidiaDriverTool\NvidiaDriverTool.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(RionEdition)' == 'Free'">
+    <DefineConstants>$(DefineConstants);RION_FREE</DefineConstants>
+  </PropertyGroup>
+
+
+  <Target Name="ValidateRionEdition" BeforeTargets="PrepareForBuild">
+  </Target>
+</Project>

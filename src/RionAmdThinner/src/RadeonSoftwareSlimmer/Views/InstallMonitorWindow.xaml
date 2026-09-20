@@ -1,0 +1,129 @@
+<Window x:Class="RadeonSoftwareSlimmer.Views.InstallMonitorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Installation Monitor" Icon="pack://application:,,,/AmdDriverManager;component/icon.ico"
+        Height="620" Width="520" MinHeight="480" MinWidth="440"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="True"
+        WindowStyle="None" AllowsTransparency="False" Background="Transparent"
+        ResizeMode="CanResize" FontFamily="{StaticResource AppFont}"
+        TextOptions.TextFormattingMode="Ideal" UseLayoutRounding="True">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="7"
+                            CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Border x:Name="RootShell" CornerRadius="11" Background="{StaticResource Scrim}"
+            BorderThickness="1" BorderBrush="{StaticResource GlossEdge}">
+        
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- caption -->
+            <Grid Grid.Row="0">
+                <StackPanel Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <Border Width="24" Height="24" CornerRadius="6" Background="{StaticResource Accent}">
+                        
+                        <TextBlock Text="R" FontFamily="{StaticResource DisplayFont}" FontWeight="Bold" FontSize="13"
+                                   Foreground="#FFFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Rion AMD Manager" Margin="10,0,0,0" VerticalAlignment="Center"
+                               FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource Text}"/>
+                    <Border Width="1" Height="14" Background="#26FFFFFF" Margin="10,0"/>
+                    <TextBlock Text="Installation Monitor" VerticalAlignment="Center"
+                               FontSize="12.5" Foreground="{StaticResource TextTertiary}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="btnMin" Style="{StaticResource CaptionButton}" Click="btnMin_Click" ToolTip="Minimise"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Path Style="{StaticResource CaptionGlyph}" Data="M0,0 H10"/>
+                    </Button>
+                    <Button x:Name="btnClose" Style="{StaticResource CaptionCloseButton}" Click="btnClose_Click" ToolTip="Close"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Path Style="{StaticResource CaptionGlyph}" Data="M0,0 L10,10 M10,0 L0,10"/>
+                    </Button>
+                </StackPanel>
+                <Border Height="1" VerticalAlignment="Bottom" Background="{StaticResource Divider}"/>
+            </Grid>
+
+            <!-- hero state -->
+            <StackPanel Grid.Row="1" Margin="24,20,24,6">
+                <StackPanel Orientation="Horizontal">
+                    <Grid Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,11,0">
+                        <Ellipse x:Name="StatusGlow" Width="12" Height="12" Fill="{StaticResource TextTertiary}" Opacity="0.32"/>
+                        <Ellipse x:Name="StatusDot"  Width="8"  Height="8"  Fill="{StaticResource TextTertiary}"/>
+                    </Grid>
+                    <TextBlock Text="{Binding PhaseLabel}" Style="{StaticResource H1}" FontSize="22" TextWrapping="Wrap"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Detail}" Style="{StaticResource Caption}" FontSize="13" TextWrapping="Wrap"
+                           Margin="23,8,0,0"/>
+                <Button Content="Apply my changes now" Style="{StaticResource AccentButton}" Padding="16,7"
+                        HorizontalAlignment="Left" Margin="23,14,0,0"
+                        Visibility="{Binding AwaitingManualConfirm, Mode=OneWay, Converter={StaticResource BoolToVis}}"
+                        Click="btnManualApply_Click"/>
+            </StackPanel>
+
+            <!-- progress -->
+            <StackPanel Grid.Row="2" Margin="24,14,24,4">
+                <TextBlock Text="{Binding ActivityTag}" Style="{StaticResource Caption}" Margin="0,0,0,7"
+                           Visibility="{Binding ActivityTag, Converter={StaticResource EmptyStrToVis}}"/>
+                <ProgressBar Height="8" Minimum="0" Maximum="100"
+                             Value="{Binding Percent, Mode=OneWay}"
+                             IsIndeterminate="{Binding ProgressIndeterminate, Mode=OneWay}"/>
+            </StackPanel>
+
+            <!-- queued -->
+            <Border Grid.Row="3" Margin="24,16,24,8" Style="{StaticResource Card}" VerticalAlignment="Top">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="QUEUED TO APPLY AFTER THE DRIVER INSTALL" Style="{StaticResource Caption}"/>
+
+                        <TextBlock Text="Service &amp; task changes" FontSize="12.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource Text}" Margin="0,12,0,0"/>
+                        <ItemsControl ItemsSource="{Binding PlannedServiceChanges}" Margin="0,4,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Caption}" FontSize="12"
+                                                         Margin="0,2" TextWrapping="Wrap"/></DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="None selected." Style="{StaticResource Caption}" Opacity="0.55"
+                                   Visibility="{Binding PlannedServiceChanges.Count, Converter={StaticResource ZeroToVis}}"/>
+
+                        <Grid Margin="0,14,0,0">
+                            <TextBlock Text="GPU tweaks" FontSize="12.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Text}" VerticalAlignment="Center"/>
+                            <Button Content="Skip GPU tweaks" HorizontalAlignment="Right" Padding="10,3" FontSize="11"
+                                    Visibility="{Binding CanCancelGpuTweaks, Mode=OneWay, Converter={StaticResource BoolToVis}}"
+                                    Click="btnSkipTweaks_Click"/>
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding PlannedGpuTweaks}" Margin="0,4,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Caption}" FontSize="12"
+                                                         Margin="0,2" TextWrapping="Wrap"/></DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="None queued." Style="{StaticResource Caption}" Opacity="0.55"
+                                   Visibility="{Binding PlannedGpuTweaks.Count, Converter={StaticResource ZeroToVis}}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- footer -->
+            <Border Grid.Row="4" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Divider}"
+                    BorderThickness="0,1,0,0" Padding="20,12" CornerRadius="0,0,10,10">
+                <Button x:Name="btnFinish" Content="Finish and Export" HorizontalAlignment="Right" Padding="20,7"
+                        Style="{StaticResource AccentButton}" IsEnabled="{Binding IsFinished, Mode=OneWay}"
+                        Click="btnFinish_Click"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

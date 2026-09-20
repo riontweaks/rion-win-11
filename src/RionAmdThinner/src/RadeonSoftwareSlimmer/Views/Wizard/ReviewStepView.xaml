@@ -1,0 +1,75 @@
+<UserControl x:Class="RadeonSoftwareSlimmer.Views.Wizard.ReviewStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontFamily="{DynamicResource AppFont}" UseLayoutRounding="True">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,6,32,24" MaxWidth="900" HorizontalAlignment="Left">
+            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextDim}"
+                       Text="Review the plan. When you press Prepare Installer a modified working copy is built in the workspace — your original installer is never changed."/>
+
+            <Border Style="{StaticResource Card}" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="Installation plan" Style="{StaticResource H2}"/>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="GPU / Windows" Style="{StaticResource Caption}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1">
+                            <Run Text="{Binding Hardware.GpuName, Mode=OneWay}"/><Run Text="  ·  "/><Run Text="{Binding Hardware.WindowsVersion, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Driver package" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Info.PackageVersion}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Original installer" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Info.FilePath}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Workspace" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding WorkspacePath}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,6,0">
+                    <StackPanel>
+                        <TextBlock Text="Keeping" Style="{StaticResource H2}"/>
+                        <ItemsControl ItemsSource="{Binding Keeping}" Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate><DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource Caption}" Margin="0,2"/>
+                            </DataTemplate></ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="6,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Excluding" Style="{StaticResource H2}"/>
+                        <ItemsControl ItemsSource="{Binding Excluding}" Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate><DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource Caption}" Foreground="{StaticResource CautionCol}" Margin="0,2"/>
+                            </DataTemplate></ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="Nothing — full package will be installed." Style="{StaticResource Caption}"
+                                   Visibility="{Binding AnythingExcluded, Converter={StaticResource InvBoolToVis}}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Style="{StaticResource Caption}"
+                               Text="You are about to create a modified working copy of the AMD installer. The original installer will remain unchanged. Review the feature tradeoffs above before continuing."/>
+                    <WrapPanel Margin="0,12,0,0">
+                        <Button Content="Prepare Installer" Style="{StaticResource AccentButton}" Padding="18,8"
+                                Command="{Binding PrepareCommand}"/>
+                        <Button Content="Export Plan" Margin="8,0,0,0" Command="{Binding ExportPlanCommand}"/>
+                    </WrapPanel>
+                    <TextBlock Text="After preparation, export the customized installer to a new folder anywhere you can write. Run Setup.exe from that folder without Rion. Package and scheduled-task changes are included; live service changes and GPU tweaks are not." Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,14,0,10"/>
+                    <WrapPanel><Button Content="Export installer to folder…" Command="{Binding ExportInstallerCommand}" Style="{StaticResource AccentButton}" Margin="0,0,8,0"/><Button Content="Cancel export" Command="{Binding CancelExportCommand}" Visibility="{Binding IsExporting, Converter={StaticResource BoolToVis}}"/></WrapPanel>
+                    <TextBlock Text="{Binding Status}" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                    <TextBlock Style="{StaticResource Caption}" Opacity="0.7" Margin="0,4,0,0" TextWrapping="Wrap"
+                               Visibility="{Binding BackupManifestPath, Converter={StaticResource NullToVis}}">
+                        <Run Text="Backup manifest: "/><Run Text="{Binding BackupManifestPath, Mode=OneWay}"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

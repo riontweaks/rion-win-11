@@ -1,0 +1,52 @@
+<UserControl x:Class="NvidiaDriverTool.Views.CustomizeStepView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        FontFamily="{StaticResource AppFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal">
+    <DockPanel Margin="0,10,0,0">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding ScopeNote}" TextWrapping="Wrap" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
+        <StackPanel DockPanel.Dock="Top" Visibility="{Binding ShowPresets, Converter={StaticResource BoolToVis}}" Margin="0,0,0,12">
+            <WrapPanel>
+                <Button Content="Keep all" Command="{Binding KeepAllCommand}" Margin="0,0,8,8"/>
+                <Button Content="Without companion app" Command="{Binding WithoutAppCommand}" Margin="0,0,8,8"/>
+                <Button Content="Driver-focused" Command="{Binding DriverFocusedCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <TextBlock Text="Without companion app removes NVIDIA app / GeForce Experience packages where dependencies allow, including their recording and overlay features. Driver-focused also excludes known optional audio, PhysX, USB-C and legacy extras; keep these if you use them." Style="{StaticResource Caption}" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding PresetStatus}" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+        </StackPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Search packages, services and tasks" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+        <TextBox DockPanel.Dock="Top" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Search NVIDIA packages, services and tasks" ToolTip="Search packages, services and tasks" Margin="0,0,0,12"/>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Caption}" Margin="0,0,0,10">
+            <Run Text="{Binding ExcludedCount, Mode=OneWay}"/><Run Text=" of "/><Run Text="{Binding TotalCount, Mode=OneWay}"/>
+            <Run Text=" components excluded. Required components can't be excluded."/>
+        </TextBlock>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Card}" Padding="14,11" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,14,0">
+                                    <WrapPanel>
+                                        <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="SemiBold"/>
+                                        <Border Style="{StaticResource Pill}" Margin="8,0,0,0">
+                                            <TextBlock Text="{Binding ClassificationLabel}" FontSize="10.5"/>
+                                        </Border>
+                                    </WrapPanel>
+                                    <TextBlock Text="{Binding Detail}" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                    <TextBlock Text="{Binding Purpose}" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"
+                                              AutomationProperties.Name="{Binding Name}" IsChecked="{Binding Keep}" IsEnabled="{Binding CanExclude}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

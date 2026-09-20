@@ -1,0 +1,158 @@
+<UserControl x:Class="RadeonSoftwareSlimmer.Views.PreInstallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:uc="clr-namespace:RadeonSoftwareSlimmer.Views"
+             xmlns:vm="clr-namespace:RadeonSoftwareSlimmer.ViewModels" FontFamily="{DynamicResource AppFont}" UseLayoutRounding="True">
+    <Grid>
+        <TabControl x:Name="flpWizard" BorderThickness="0" Background="Transparent">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- 0: select installer -->
+            <TabItem>
+                <StackPanel VerticalAlignment="Center" MaxWidth="760" HorizontalAlignment="Left">
+                    <TextBlock Text="Select the Radeon Software installer" Style="{StaticResource H2}"/>
+                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,4,0,10"
+                               Text="Pick an installer .exe, download one from AMD, or Skip if you already extracted one. The full package for your GPU is what the slimmer strips — the auto-detect installer is just a small bootstrapper."/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" VerticalContentAlignment="Center"
+                                 Text="{Binding InstallerFiles.InstallerFile}"/>
+                        <Button Grid.Column="1" x:Name="btnInstallerFileBrowse" Content="Browse…"
+                                Click="btnInstallerFileBrowse_Click" Margin="6,0,0,0"/>
+                    </Grid>
+                    <WrapPanel Margin="0,12,0,0">
+                        <Button x:Name="btnDownloadSeries" Content="Download GPU-series package (full)"
+                                Style="{StaticResource AccentButton}" Click="btnDownloadSeries_Click"
+                                IsEnabled="{Binding IsDownloading, Converter={StaticResource InverseBool}}"
+                                Margin="0,0,6,6"/>
+                        <Button x:Name="btnDownloadLatest" Content="Download auto-detect installer (small)"
+                                Click="btnDownloadLatest_Click" IsEnabled="{Binding IsDownloading, Converter={StaticResource InverseBool}}"
+                                Margin="0,0,6,6"/>
+                        <Button x:Name="btnSkip0" Content="Skip" Click="btnSkip0_Click" Margin="0,0,6,6"/>
+                        <Button x:Name="btnNext0" Content="Next" Click="btnNext0_Click" Margin="0,0,0,6"/>
+                    </WrapPanel>
+                    <StackPanel Margin="0,12,0,0" Visibility="{Binding IsDownloading, Converter={StaticResource StdBoolToVis}}">
+                        <TextBlock Text="Downloading from amd.com…" Style="{StaticResource Caption}"/>
+                        <ProgressBar Height="4" Margin="0,6,0,0" Minimum="0" Maximum="1"
+                                     Value="{Binding DownloadProgress, Mode=OneWay}"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 1: extract location -->
+            <TabItem>
+                <StackPanel VerticalAlignment="Center" MaxWidth="720" HorizontalAlignment="Left">
+                    <TextBlock Text="Where should it be extracted?" Style="{StaticResource H2}"/>
+                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,4,0,10"
+                               Text="Choose an empty folder to extract into, or the folder where it is already extracted."/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" VerticalContentAlignment="Center"
+                                 Text="{Binding InstallerFiles.ExtractedInstallerDirectory}"/>
+                        <Button Grid.Column="1" x:Name="btnExtractLocatonBrowse" Content="Browse…"
+                                Click="btnExtractLocatonBrowse_Click" Margin="6,0,0,0"/>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button x:Name="btnBack1" Content="Back" Click="btnBack1_Click" Margin="0,0,6,0"/>
+                        <Button x:Name="btnNext1" Content="Next" Style="{StaticResource AccentButton}"
+                                Click="btnNext1_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 2: extracting -->
+            <TabItem>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Extracting installer files, please wait…" HorizontalAlignment="Center"/>
+                    <ProgressBar IsIndeterminate="True" Width="280" Height="4" Margin="0,12,0,0"/>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 3: modify -->
+            <TabItem>
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
+                        <Button x:Name="btnNewInstaller" DockPanel.Dock="Left" Content="Select new installer"
+                                Click="btnNewInstaller_Click" Margin="0,0,6,0"/>
+                        <Button x:Name="btnRunCleanup" DockPanel.Dock="Left" Content="Run AMD Cleanup Utility"
+                                Click="btnRunCleanup_Click" Margin="0,0,16,0"/>
+                        <Button x:Name="btnRunInstaller" DockPanel.Dock="Right" Content="Run installer"
+                                Style="{StaticResource AccentButton}" Padding="16,6" Click="btnRunInstaller_Click"/>
+                        <Button x:Name="btnSaveModified" DockPanel.Dock="Right" Content="Save modified installer…"
+                                Click="btnSaveModified_Click" Margin="0,0,8,0" Padding="16,6"/>
+                        <Button x:Name="btnModifyInstallerFiles" DockPanel.Dock="Right" Content="Modify installer"
+                                Click="btnModifyInstallerFiles_Click" Margin="0,0,8,0" Padding="16,6"/>
+                        <Button x:Name="btnResetToDefault" DockPanel.Dock="Right" Content="Reset to defaults"
+                                Click="btnResetToDefault_Click" Margin="0,0,8,0"/>
+                        <TextBlock/>
+                    </DockPanel>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="Packages" Style="{StaticResource H2}"/>
+                            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Installer-Packages" Margin="8,0,0,0"/>
+                            <Button x:Name="btnPackageSelectAll" Content="Keep all" Click="btnPackageSelectAll_Click" Margin="16,0,4,0"/>
+                            <Button x:Name="btnPackageSelectNone" Content="Keep none" Click="btnPackageSelectNone_Click"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource Card}" Padding="8">
+                            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="220"
+                                      ItemsSource="{Binding PackageList.InstallerPackages}"
+                                      SelectionChanged="DataGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="Keep" Binding="{Binding Keep, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
+                                    <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" IsReadOnly="True" Width="*"/>
+                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" IsReadOnly="True" Width="120"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,16,0,4">
+                            <TextBlock Text="Scheduled tasks" Style="{StaticResource H2}"/>
+                            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Scheduled-Tasks" Margin="8,0,0,0"/>
+                            <Button x:Name="btnScheduledTaskSelectAll" Content="Enable all" Click="btnScheduledTaskSelectAll_Click" Margin="16,0,4,0"/>
+                            <Button x:Name="btnScheduledTaskSelectNone" Content="Disable all" Click="btnScheduledTaskSelectNone_Click"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource Card}" Padding="8">
+                            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="180"
+                                      ItemsSource="{Binding ScheduledTaskList.ScheduledTasks}"
+                                      SelectionChanged="DataGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,16,0,4">
+                            <TextBlock Text="Display driver components" Style="{StaticResource H2}"/>
+                            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/System-Services-and-Drivers" Margin="8,0,0,0"/>
+                            <Button x:Name="btnDisplayComponentsSelectAll" Content="Keep all" Click="btnDisplayComponentsSelectAll_Click" Margin="16,0,4,0"/>
+                            <Button x:Name="btnDisplayComponentsSelectNone" Content="Keep none" Click="btnDisplayComponentsSelectNone_Click"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource Card}" Padding="8">
+                            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="180"
+                                      ItemsSource="{Binding DisplayComponentList.DisplayDriverComponents}"
+                                      SelectionChanged="DataGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="Keep" Binding="{Binding Keep, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
+                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" Width="*"/>
+                                    <DataGridTextColumn Header="Folder" Binding="{Binding Directory}" IsReadOnly="True" Width="220"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </StackPanel>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

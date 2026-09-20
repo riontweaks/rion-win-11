@@ -1,0 +1,1 @@
+<Project><PropertyGroup><RionEdition Condition="'$(RionEdition)' == ''">Free</RionEdition><DefineConstants>$(DefineConstants);RION_FREE</DefineConstants></PropertyGroup><Target Name="RequireFreeEdition" BeforeTargets="PrepareForBuild"><Error Condition="'$(RionEdition)' != 'Free'" Text="This source distribution builds only Rion Free."/></Target></Project>

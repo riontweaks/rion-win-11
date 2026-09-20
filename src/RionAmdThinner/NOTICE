@@ -1,0 +1,32 @@
+Rion AMD Thinner
+================
+
+This program is a fork of Radeon Software Slimmer.
+
+    Radeon Software Slimmer
+    Copyright (C) Greg Seaton (GSDragoon)
+    https://github.com/GSDragoon/RadeonSoftwareSlimmer
+
+Radeon Software Slimmer is licensed under the GNU General Public License
+version 3.0. This fork is likewise distributed under the GPL-3.0 — see the
+LICENSE file for the full text.
+
+Portions retained largely unchanged from the upstream project:
+  - the pre-install installer-slimming engine
+    (src/RadeonSoftwareSlimmer/Models/PreInstall/*)
+  - the post-install engine: system services, scheduled tasks, host
+    processes, installed-programs and temp-file handling
+    (src/RadeonSoftwareSlimmer/Models/PostInstall/*)
+  - the registry abstraction and process/7-Zip helpers
+    (src/RadeonSoftwareSlimmer/Intefaces/*, src/RadeonSoftwareSlimmer/Services/
+     WindowsRegistry*.cs, ProcessHandler.cs)
+  - the bundled 7-Zip binaries (src/Shared/7-Zip)
+
+New in this fork (not from upstream):
+  - the left-rail shell and Fluent dark theme
+  - Windows-tweaks, startup-and-services, driver-download and
+    recommended-settings features and their catalogs
+  - the backup / restore-point / revert mechanism
+
+This software is NOT owned, supported or endorsed by Advanced Micro Devices,
+Inc. (AMD) or Microsoft.

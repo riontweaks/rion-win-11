@@ -1,0 +1,66 @@
+<UserControl x:Class="RadeonSoftwareSlimmer.Views.Wizard.SelectDriverStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontFamily="{DynamicResource AppFont}" UseLayoutRounding="True">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,6,32,24" MaxWidth="900" HorizontalAlignment="Left">
+            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextDim}"
+                       Text="Pick an official AMD installer .exe, or download one. The full 'AMD Software: Adrenalin Edition' package is the one this tool can customize — the auto-detect installer is only a small bootstrapper."/>
+
+            <Border Style="{StaticResource Card}" Margin="0,16,0,0" AutomationProperties.AutomationId="select-driver-existing">
+                <StackPanel>
+                    <TextBlock Text="{Binding PreparationStatus}" TextWrapping="Wrap" Style="{StaticResource Caption}" Margin="0,0,0,8"/><TextBlock Text="Installer file" Style="{StaticResource H2}"/>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding InstallerPath, Mode=OneWay}" IsReadOnly="True"
+                                 VerticalContentAlignment="Center"/>
+                        <Button Grid.Column="1" Content="Browse…" Margin="6,0,0,0" Command="{Binding BrowseCommand}"/>
+                        <Button Grid.Column="2" Content="Clear" Margin="6,0,0,0" Command="{Binding ClearCommand}"/>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Validate" Style="{StaticResource AccentButton}" Command="{Binding ValidateCommand}"/>
+                        <Button Content="Download full GPU package" Margin="8,0,0,0"
+                                Command="{Binding DownloadFullPackageCommand}"
+                                IsEnabled="{Binding IsDownloading, Converter={StaticResource InverseBool}}"/>
+                        <Button Content="Download auto-detect (small)" Margin="8,0,0,0"
+                                Command="{Binding DownloadAutoDetectCommand}"
+                                IsEnabled="{Binding IsDownloading, Converter={StaticResource InverseBool}}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,10,0,0" Visibility="{Binding IsDownloading, Converter={StaticResource StdBoolToVis}}">
+                        <TextBlock Text="Downloading from amd.com…" Style="{StaticResource Caption}"/>
+                        <ProgressBar Height="4" Minimum="0" Maximum="1" Value="{Binding DownloadProgress, Mode=OneWay}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,12,0,0"
+                    Visibility="{Binding HasInfo, Converter={StaticResource StdBoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="Installer details" Style="{StaticResource H2}"/>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="SHA-256" Style="{StaticResource Caption}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Info.OriginalHashSha256}" TextWrapping="Wrap"
+                                   FontFamily="{StaticResource MonoFont}" FontSize="11"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Size" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Info.FileSizeDisplay}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Package version" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Info.PackageVersion}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Signature" Style="{StaticResource Caption}" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SignatureText}" Margin="0,6,0,0"/>
+                    </Grid>
+                    <Border Style="{StaticResource InfoBar}" Margin="0,12,0,0" BorderBrush="{StaticResource CautionCol}"
+                            Visibility="{Binding TrustWarning, Converter={StaticResource StdBoolToVis}}">
+                        <TextBlock TextWrapping="Wrap" Foreground="{StaticResource CautionCol}"
+                                   Text="This file does not have a verified AMD publisher signature. Choose an official AMD installer to continue."/>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

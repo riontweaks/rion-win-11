@@ -1,0 +1,155 @@
+<UserControl x:Class="RadeonSoftwareSlimmer.Views.PostInstallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:uc="clr-namespace:RadeonSoftwareSlimmer.Views"
+             xmlns:vm="clr-namespace:RadeonSoftwareSlimmer.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:ss="clr-namespace:System.ServiceProcess;assembly=System.ServiceProcess.ServiceController"
+             Initialized="UserControl_Initialized" FontFamily="{DynamicResource AppFont}" UseLayoutRounding="True">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="ServiceStartModeEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="ss:ServiceStartMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+
+    <StackPanel IsEnabled="{Binding Path=(vm:StaticViewModel.IsUiEnabled)}">
+
+        <!-- ===== Host processes ===== -->
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+            <TextBlock Text="Radeon Software host processes" Style="{StaticResource H2}"/>
+            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Host-Services" Margin="8,0,0,0"/>
+        </StackPanel>
+        <Border Style="{StaticResource Card}" Padding="8">
+            <StackPanel>
+                <DataGrid Style="{StaticResource DataGridDark}" IsReadOnly="True" MaxHeight="220"
+                          ItemsSource="{Binding HostService.HostServices}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Process" Binding="{Binding Name}" Width="160"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                        <DataGridTemplateColumn Header="Running" Width="80"><DataGridTemplateColumn.CellTemplate><DataTemplate><ToggleButton Style="{StaticResource ToggleSwitch}" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsRunning, Mode=OneWay}" IsEnabled="False" AutomationProperties.Name="Running"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button x:Name="btnHostServicesRestart" Content="Start / Restart"
+                            Click="btnHostServicesRestart_Click" IsEnabled="{Binding HostService.Installed}"
+                            Margin="0,0,6,0"/>
+                    <Button x:Name="btnHostServicesStop" Content="Stop Radeon Software now"
+                            Click="btnHostServicesStop_Click" IsEnabled="{Binding HostService.Installed}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                    <TextBlock Text="Start Radeon Software at logon" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <ToggleButton Style="{StaticResource ToggleSwitch}" IsChecked="{Binding WindowsAppStartup.Enabled}"
+                                  IsEnabled="{Binding WindowsAppStartup.Exists}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Scheduled tasks ===== -->
+        <StackPanel Orientation="Horizontal" Margin="0,20,0,4">
+            <TextBlock Text="Scheduled tasks" Style="{StaticResource H2}"/>
+            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Scheduled-Tasks" Margin="8,0,0,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+            <Button x:Name="btnScheduledTaskEnableAll" Content="Enable all" Click="btnScheduledTaskEnableAll_Click" Margin="0,0,6,0"/>
+            <Button x:Name="btnScheduledTaskDisableAll" Content="Disable all" Click="btnScheduledTaskDisableAll_Click"/>
+        </StackPanel>
+        <Border Style="{StaticResource Card}" Padding="8">
+            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="320"
+                      ItemsSource="{Binding RadeonScheduledTaskList.RadeonScheduledTasks}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Enabled" Width="80"><DataGridTemplateColumn.CellTemplate><DataTemplate><ToggleButton Style="{StaticResource ToggleSwitch}" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}"  AutomationProperties.Name="Enabled"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="200"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" Width="*"/>
+                    <DataGridTextColumn Header="State" Binding="{Binding State}" IsReadOnly="True" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ===== Services & drivers ===== -->
+        <StackPanel Orientation="Horizontal" Margin="0,20,0,4">
+            <TextBlock Text="System services &amp; drivers" Style="{StaticResource H2}"/>
+            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/System-Services-and-Drivers" Margin="8,0,0,0"/>
+        </StackPanel>
+        <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,0,0,6"
+                   Text="Uncheck Enabled to disable a service. Kernel-driver changes need a restart. Disabling AMD External Events Utility breaks FreeSync / Chill / Anti-Lag."/>
+        <Border Style="{StaticResource Card}" Padding="8">
+            <StackPanel>
+                <DataGrid x:Name="grdServices" Style="{StaticResource DataGridDark}" SelectionMode="Single"
+                          MaxHeight="380" ItemsSource="{Binding ServiceList.Services}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Enabled" Width="80"><DataGridTemplateColumn.CellTemplate><DataTemplate><ToggleButton Style="{StaticResource ToggleSwitch}" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}"  AutomationProperties.Name="Enabled"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="170"/>
+                        <DataGridTextColumn Header="Display name" Binding="{Binding DisplayName}" IsReadOnly="True" Width="*"/>
+                        <DataGridTextColumn Header="Start" Binding="{Binding StartMode}" IsReadOnly="True" Width="90"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" Width="90"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" IsReadOnly="True" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button x:Name="btnServiceStart" Content="Start / Restart" Click="btnServiceStart_Click" Margin="0,0,6,0"/>
+                    <Button x:Name="btnServiceStop" Content="Stop" Click="btnServiceStop_Click" Margin="0,0,16,0"/>
+                    <ComboBox x:Name="cbxServiceStartMode" Width="130" Margin="0,0,6,0"
+                              ItemsSource="{Binding Source={StaticResource ServiceStartModeEnum}}"/>
+                    <Button x:Name="btnServiceChangeStartMode" Content="Change start mode" Click="btnServiceChangeStartMode_Click"/>
+                    <Button x:Name="btnServiceDelete" Content="Delete service" Click="btnServiceDelete_Click"
+                            Visibility="Collapsed"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Installed programs ===== -->
+        <StackPanel Orientation="Horizontal" Margin="0,20,0,4">
+            <TextBlock Text="Installed programs" Style="{StaticResource H2}"/>
+            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Installer-Entries" Margin="8,0,0,0"/>
+        </StackPanel>
+        <Border Style="{StaticResource Card}" Padding="8">
+            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="320" ItemsSource="{Binding InstalledList.InstalledItems}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Uninstall" Width="90"><DataGridTemplateColumn.CellTemplate><DataTemplate><ToggleButton Style="{StaticResource ToggleSwitch}" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Uninstall, UpdateSourceTrigger=PropertyChanged}"  AutomationProperties.Name="Uninstall"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" IsReadOnly="True" Width="*"/>
+                    <DataGridTextColumn Header="Version" Binding="{Binding DisplayVersion}" IsReadOnly="True" Width="140"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ===== Temp files ===== -->
+        <StackPanel Orientation="Horizontal" Margin="0,20,0,4">
+            <TextBlock Text="Logs &amp; temporary files" Style="{StaticResource H2}"/>
+            <uc:HelpLink Link="https://github.com/GSDragoon/RadeonSoftwareSlimmer/wiki/Logging-and-Temp-Files" Margin="8,0,0,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+            <Button x:Name="btnTempFilesSelectAll" Content="Select all" Click="btnTempFilesSelectAll_Click" Margin="0,0,6,0"/>
+            <Button x:Name="btnTempFilesSelectNone" Content="Select none" Click="btnTempFilesSelectNone_Click"/>
+        </StackPanel>
+        <Border Style="{StaticResource Card}" Padding="8">
+            <DataGrid Style="{StaticResource DataGridDark}" MaxHeight="260" ItemsSource="{Binding TempFileList.TempFiles}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Clear" Width="70"><DataGridTemplateColumn.CellTemplate><DataTemplate><ToggleButton Style="{StaticResource ToggleSwitch}" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Clear, UpdateSourceTrigger=PropertyChanged}"  AutomationProperties.Name="Clear"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Folder" Binding="{Binding Folder}" IsReadOnly="True" Width="*"/>
+                    <DataGridTextColumn Header="Files" Binding="{Binding Files}" IsReadOnly="True" Width="80"/>
+                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" IsReadOnly="True" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ===== Apply ===== -->
+        <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" TextWrapping="Wrap" Style="{StaticResource Caption}"
+                           Text="Nothing changes until you click Apply. A restart is strongly recommended afterwards."/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="btnLoadOrRefresh" Content="Reload" Click="btnLoadOrRefresh_Click"
+                            IsEnabled="{Binding LoadedPanelEnabled}" Margin="0,0,6,0"/>
+                    <Button x:Name="btnApply" Content="Apply AMD component changes" Style="{StaticResource AccentButton}"
+                            Padding="18,6" Click="btnApply_Click" IsEnabled="{Binding LoadedPanelEnabled}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>

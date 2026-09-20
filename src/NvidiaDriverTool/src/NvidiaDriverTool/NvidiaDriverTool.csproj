@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>NvidiaDriverTool</AssemblyName>
+    <RootNamespace>NvidiaDriverTool</RootNamespace>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+
+    <Version>0.1.0</Version>
+    <Product>NVIDIA Driver Tool (Rion)</Product>
+    <Company>Rion</Company>
+    <Authors>Rion</Authors>
+    <AssemblyTitle>NVIDIA Driver Tool (Rion)</AssemblyTitle>
+    <Copyright>Rion</Copyright>
+  </PropertyGroup>
+
+  <!--
+    Hosted as a module inside "Rion Win 11" (src/RionHub) — the NVIDIA mirror of
+    RionAmdThinner\src\RadeonSoftwareSlimmer (driver download + component-selective silent
+    install). References RadeonSoftwareSlimmer directly for the pieces that are already fully
+    vendor-neutral (SevenZip extraction, ComponentRowViewModel shape, AuditLog, BackupStore,
+    Elevation, RestorePoint, DriverDownloadService.DownloadAsync) instead of duplicating them —
+    see the project plan for why this differs from how the ALDX/Nvidia mirror was done.
+
+    Stage 1 (now): project skeleton + NvidiaDriverDownloadService (driver lookup/download only).
+    The wizard shell, component-manifest parsing, and install invocation are later stages that
+    need a real downloaded NVIDIA driver package to build against — see the plan's build order.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RionAmdThinner\src\RadeonSoftwareSlimmer\RadeonSoftwareSlimmer.csproj" />
+  </ItemGroup>
+
+</Project>
