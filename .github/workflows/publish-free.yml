@@ -1,0 +1,137 @@
+name: Verify and publish Free migration
+on:
+  push:
+    paths: ['.github/workflows/publish-free.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify-publish:
+    runs-on: windows-2025
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: riontweaks/rion-win-11
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.425'
+      - name: Download and verify reviewed candidates
+        run: |
+          $ErrorActionPreference='Stop'
+          $package=Join-Path $env:RUNNER_TEMP 'free-candidate'
+          New-Item -ItemType Directory $package | Out-Null
+          gh release download Files --dir $package --pattern 'candidate-Free-*' --pattern 'Rion-Free-source.zip' --pattern '*manifest.json'
+          if($LASTEXITCODE){throw 'Candidate download failed'}
+          $expected=@{
+            'candidate-Free-Portable.exe'='957CBF4214EE8B69148011B5E7B625B527DF4A393864DD11A376E5CCD8063DBC'
+            'candidate-Free-Setup.exe'='16D84834806BBF1363B521910E066FA15B4855C057C94558FBD33DDDE51A5D20'
+            'Rion-Free-source.zip'='FE5121253239FF33D4BFDCD85B6A6361ABFB6E8605F160D9CC55BDB2A8678882'
+            'release-manifest.json'='59341BBF98066FFA49ACE1041835F2BF8C05BCE8FF687BE8DB24C08546865E4A'
+            'installer-manifest.json'='D7E2E4A92CB25F19ED734DCAF71FA54BCDDE3EA7B686D729BA8E33AC9107668F'
+          }
+          foreach($name in $expected.Keys){if((Get-FileHash (Join-Path $package $name)).Hash -ne $expected[$name]){throw "Hash mismatch: $name"}}
+          $source=Join-Path $env:RUNNER_TEMP 'free-source'
+          Expand-Archive (Join-Path $package 'Rion-Free-source.zip') $source
+          $manifest=Get-Content (Join-Path $package 'release-manifest.json') -Raw | ConvertFrom-Json
+          if($manifest.edition -ne 'Free'){throw 'Not Free'}
+          foreach($entry in $manifest.source.files){if((Get-FileHash (Join-Path $source $entry.path)).Hash -ne $entry.sha256){throw "Source mismatch: $($entry.path)"}}
+          if((Get-ChildItem $source -File -Recurse -Force).Count -ne $manifest.source.files.Count){throw 'Unexpected source files'}
+      - name: Test exported public source
+        run: |
+          Set-Location (Join-Path $env:RUNNER_TEMP 'free-source')
+          ./tools/Test.ps1
+          if($LASTEXITCODE -ne 0){throw 'Free source tests failed'}
+      - name: Portable and offline installer lifecycle in isolated Windows
+        run: |
+          $ErrorActionPreference='Stop'
+          $package=Join-Path $env:RUNNER_TEMP 'free-candidate'
+          $portable=Join-Path $package 'candidate-Free-Portable.exe'
+          $setup=Join-Path $package 'candidate-Free-Setup.exe'
+          function CheckLaunch($path){
+            $app=Start-Process -FilePath $path -PassThru -WindowStyle Hidden
+            try {Start-Sleep -Seconds 10; if($app.HasExited){throw "Portable exited: $($app.ExitCode)"}} finally {if(!$app.HasExited){Stop-Process -Id $app.Id -Force}}
+          }
+          CheckLaunch $portable
+          if(Test-Path (Join-Path $env:LOCALAPPDATA 'RionWin11/crash.log')){throw 'Application startup logged an exception'}
+          $recovery=Join-Path $env:LOCALAPPDATA 'RionWin11/release-verification-preserve.txt'
+          New-Item -ItemType Directory (Split-Path $recovery) -Force | Out-Null
+          Set-Content $recovery 'preserve recovery fixture'
+          $paidKey='HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\RionWin11'
+          New-Item $paidKey -Force | Out-Null
+          Set-ItemProperty $paidKey DisplayName 'Paid coexistence fixture'
+          New-NetFirewallRule -DisplayName RionOfflineInstallerFixture -Direction Outbound -Program $setup -Action Block | Out-Null
+          for($i=0;$i -lt 2;$i++){
+            $p=Start-Process $setup -ArgumentList '/S' -PassThru -WindowStyle Hidden
+            if(!$p.WaitForExit(120000)){Stop-Process $p.Id -Force;throw 'Setup timed out'}
+            if($p.ExitCode){throw "Setup failed: $($p.ExitCode)"}
+          }
+          $install=Join-Path $env:ProgramFiles 'Rion Win 11 Free'
+          if((Get-FileHash (Join-Path $install 'Rion Win 11.exe')).Hash -ne (Get-FileHash $portable).Hash){throw 'Installed payload mismatch'}
+          CheckLaunch (Join-Path $install 'Rion Win 11.exe')
+          $un=Start-Process (Join-Path $install 'Uninstall.exe') -ArgumentList '/S' -PassThru -WindowStyle Hidden
+          if(!$un.WaitForExit(120000)){throw 'Uninstall timed out'}
+          $deadline=(Get-Date).AddSeconds(30)
+          while((Test-Path (Join-Path $install 'Rion Win 11.exe')) -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 500}
+          if(Test-Path (Join-Path $install 'Rion Win 11.exe')){throw 'Installed application was not removed'}
+          if((Get-Content $recovery -Raw).Trim() -ne 'preserve recovery fixture'){throw 'Recovery data changed'}
+          if((Get-ItemProperty $paidKey).DisplayName -ne 'Paid coexistence fixture'){throw 'Paid registration changed'}
+          'Verified: portable startup; offline Free install and same-version upgrade; installed startup; uninstall preserves recovery data and separate Paid registration. Runner is Windows Server 2025; physical Windows 11 and actual Paid coexistence are not certified.' | Set-Content (Join-Path $package 'VALIDATION.txt')
+      - name: Publish Free source and matching downloads
+        run: |
+          $ErrorActionPreference='Stop'
+          $package=Join-Path $env:RUNNER_TEMP 'free-candidate'
+          $source=Join-Path $env:RUNNER_TEMP 'free-source'
+          $manifest=Get-Content (Join-Path $package 'release-manifest.json') -Raw | ConvertFrom-Json
+          # Remove only tracked files in this disposable checkout; preserve repository history.
+          Set-Location $env:GITHUB_WORKSPACE
+          git ls-files | Where-Object {$_ -notlike '.github/workflows/*'} | ForEach-Object { git rm -- $_; if($LASTEXITCODE){throw 'Tracked removal failed'} }
+          if($LASTEXITCODE){throw 'Could not replace old tracked tree'}
+          foreach($entry in $manifest.source.files){$target=Join-Path $env:GITHUB_WORKSPACE $entry.path;New-Item -ItemType Directory (Split-Path $target) -Force|Out-Null;Copy-Item (Join-Path $source $entry.path) $target}
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m 'Publish buildable Free-only source and remove private edition implementation'
+          if($LASTEXITCODE){throw 'Source commit failed'}
+          git push origin HEAD
+          if($LASTEXITCODE){throw 'Source push failed'}
+          $commit=git rev-parse HEAD
+          git tag -f Files $commit
+          git push origin refs/tags/Files --force
+          if($LASTEXITCODE){throw 'Release tag update failed'}
+          Copy-Item (Join-Path $package 'candidate-Free-Portable.exe') (Join-Path $package 'Rion-Win11-Portable.exe')
+          Copy-Item (Join-Path $package 'candidate-Free-Setup.exe') (Join-Path $package 'Rion-Win11-Setup.exe')
+          $names=@('Rion-Win11-Portable.exe','Rion-Win11-Setup.exe','Rion-Free-source.zip','release-manifest.json','installer-manifest.json','VALIDATION.txt')
+          $names | ForEach-Object{(Get-FileHash (Join-Path $package $_)).Hash+'  '+$_} | Set-Content (Join-Path $package 'SHA256SUMS.txt') -Encoding ascii
+          $notes=@"
+          ## Rion Win 11 Free
+          [Portable EXE](https://github.com/riontweaks/rion-win-11/releases/download/Files/Rion-Win11-Portable.exe) · [Complete offline installer](https://github.com/riontweaks/rion-win-11/releases/download/Files/Rion-Win11-Setup.exe)
+
+          Free includes AMD/NVIDIA driver installation, device drivers, utilities, Windows installers, game capture, Win32 Separation Control and MMCSS. DDU is available from both GPU driver pages. Free uses the Paid navigation styling and icons, with separate GPU Manager and Drivers tabs. BIOS, advanced GPU controls, customer specifications and power editing are excluded.
+
+          Setup embeds .NET and all core files; no GitHub payload download. Optional drivers and utilities require their own downloads. Free and Paid use separate install directories and registrations. Recovery data is retained on uninstall.
+
+          [Matching Free source](/riontweaks/rion-win-11/tree/$commit), source archive, SHA256SUMS, and source/artifact manifests are attached. Source digest: $($manifest.source.sha256). The Files tag points to this Free tree; older history is retained.
+
+          Exported source built and passed Free smoke, layout and rejected-edition checks locally and on an isolated Windows runner. Portable startup, offline install, same-version upgrade, installed startup and uninstall/recovery preservation passed on Windows Server 2025. Paid coexistence used a separate registration fixture; actual dual installation and physical Windows 11/hardware testing remain uncompleted. No live firmware/GPU/system tweaks were applied for testing.
+
+          Unsigned: no signing certificate configured. See VALIDATION.txt for the installer check scope.
+          "@
+          $notes | Set-Content (Join-Path $package 'release-notes.md')
+          gh release upload Files (Join-Path $package 'Rion-Win11-Portable.exe') (Join-Path $package 'Rion-Win11-Setup.exe') (Join-Path $package 'SHA256SUMS.txt') (Join-Path $package 'VALIDATION.txt') --clobber
+          if($LASTEXITCODE){throw 'Artifact replacement failed'}
+          gh release edit Files --title 'Rion Win 11 Free' --notes-file (Join-Path $package 'release-notes.md') --latest
+          if($LASTEXITCODE){throw 'Release notes update failed'}
+          gh release delete-asset Files candidate-Free-Portable.exe --yes
+          gh release delete-asset Files candidate-Free-Setup.exe --yes
+          foreach($name in @('initial-Free-Portable.exe','initial-Free-Setup.exe','initial-Free-source.zip','initial-release-manifest.json','initial-installer-manifest.json')){gh release delete-asset Files $name --yes; if($LASTEXITCODE){throw 'Initial candidate cleanup failed'}}
+          if($LASTEXITCODE){throw 'Candidate cleanup failed'}
+          $releases=gh api repos/riontweaks/rion-win-11/releases | ConvertFrom-Json
+          if(@($releases | Where-Object tag_name -ne 'Files').Count){throw 'Unexpected additional release requires inventory'}
+
